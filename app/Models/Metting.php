@@ -18,8 +18,10 @@ class Metting extends Model
      * @return {*}
      * @description: 会议详情
      */
-    public function info($filed, $condition){
-        return $this->where($filed,$condition)->first()->toArray();
+    public function info($key, $condition, $fileds = ['*']){
+        $query = self::query();
+        $data = $query->where($key,$condition)->get($fileds)->first();
+        return collect($data)->toArray();
     }
 
     public function getRoomIds($condition)
