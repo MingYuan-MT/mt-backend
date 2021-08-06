@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 20:20:53
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-07 01:05:21
+ * @LastEditTime: 2021-08-07 01:32:24
  * @LastEditors: EricZhou
  * @Description: 会议室服务
  */
@@ -65,6 +65,7 @@ class RoomService extends IndexService
             }
             $res = array_merge($roomData, $meetData);
             $res['room_uses'] = isset(Room::$room_uses_map[$roomData['uses']]) ? : '';
+            $res['metting_seize_time'] = date('Y-m-d H:i:s', time());
         }catch(\Exception $e){
             abort(self::RET_SERVER_FAIL, '抢占会议室信息获取失败:'.$e->getMessage());
         }
