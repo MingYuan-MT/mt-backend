@@ -12,6 +12,8 @@ use \Illuminate\Support\Facades\Route;
  | 抢占
  */
 Route::prefix('seize')->group(function () {
-    Route::get('metting-info','SeizeController@mettingInfo'); // 通过二维码展示当前会议室会议信息
-    Route::post('confirm','SeizeController@confirm'); // 确认抢占
+    // 通过二维码展示当前会议室会议信息
+    Route::get('metting-info','SeizeController@mettingInfo'); 
+    // 确认抢占
+    Route::post('confirm','SeizeController@confirm'); 
 });
