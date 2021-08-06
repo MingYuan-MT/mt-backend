@@ -8,6 +8,4 @@ use Illuminate\Database\Eloquent\Model;
 class Metting extends Model
 {
     use HasFactory;
-
-    protected $table = 'mettings';
 }

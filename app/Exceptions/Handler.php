@@ -52,8 +52,8 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof BadRequestHttpException) {
             return response([
-                'message' => $e->getMessage(),
                 'code' => $e->getStatusCode(),
+                'message' => $e->getMessage(),
                 'error' => [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
@@ -63,8 +63,8 @@ class Handler extends ExceptionHandler
             ], $e->getStatusCode());
         } elseif ($e instanceof NotFoundHttpException) {
             return response([
-                'message' => '未找到',
                 'code' => $e->getStatusCode(),
+                'message' => '未找到',
                 'error' => [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
@@ -74,8 +74,8 @@ class Handler extends ExceptionHandler
             ], $e->getStatusCode());
         } elseif ($e instanceof HttpException) {
             return response([
-                'message' => $e->getMessage(),
                 'code' => $e->getStatusCode(),
+                'message' => $e->getMessage(),
                 'error' => [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
@@ -85,8 +85,8 @@ class Handler extends ExceptionHandler
             ], $e->getStatusCode());
         } else {
             return response([
-                'message' => $e->getMessage(),
                 'code' => 500,
+                'message' => $e->getMessage(),
                 'error' => [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),

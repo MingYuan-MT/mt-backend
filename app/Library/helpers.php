@@ -19,3 +19,33 @@ if (!function_exists('arr_value')) {
         return \App\Library\Core\Core::value($data, $name, $default);
     }
 }
+
+if (!function_exists('rand_str')) {
+    /**
+     * 生成随机字符串
+     * @param int $length
+     * @return string
+     */
+    function rand_str(int $length = 32): string
+    {
+        $rand = '';
+        $rand_str = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        $max = strlen($rand_str) -1;
+        mt_srand((double) microtime() * 1000000);
+        for($i = 0; $i < $length; $i++) {
+            $rand .= $rand_str[mt_rand(0, $max)];
+        }
+        return $rand;
+    }
+}
+
+if (!function_exists('user_id')) {
+    /**
+     * 获取当前登陆的用户ID
+     * @return mixed
+     */
+    function user_id(): mixed
+    {
+        return $_SERVER['X_USER_ID'] ?? 0;
+    }
+}

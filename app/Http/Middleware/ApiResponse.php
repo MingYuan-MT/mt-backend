@@ -34,7 +34,7 @@ class ApiResponse
             return $response;
         }
 
-        if ($response instanceof Response && $response->exception) {
+        if ($response instanceof Response || $response->exception) {
             return $response;
         }
     }

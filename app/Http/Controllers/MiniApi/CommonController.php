@@ -9,7 +9,6 @@
 namespace App\Http\Controllers\MiniApi;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;

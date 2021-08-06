@@ -2,42 +2,36 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded = ['id'];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
+     * @param $data
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public static function login($data)
+    {
+        $user = self::query()->updateOrCreate([
+            'mobile' => arr_value($data, 'mobile'),
+        ], [
+            'name' => arr_value($data, 'nick_name', ''),
+            'unionid' => arr_value($data, 'unionid', ''),
+            'created_by' => arr_value($data, 'created_by', ''),
+            'modified_by' => arr_value($data, 'modified_by', ''),
+        ]);
+        dd(Auth::guard('api')->loginUsingId($user->id));
+        $api_token = rand_str();
+        $user->api_token = $api_token;
+        $user->save();
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+        return $api_token;
+    }
 }
