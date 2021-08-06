@@ -27,13 +27,13 @@ class SeizeService
             $rquery = new Room();
             $roomData = $rquery->info(['id' => $data['id']],['id as room_id','name','floor','capacity','uses']);
             if(empty($roomData)){
-                abort(400, '会议室信息不存在！');
+                client_error('会议室信息不存在！');
             }
 
             $mquery = new Metting();
             $meetData = $mquery->info(['room_id'=> $roomData['room_id']], ['id as metting_id','subject','moderator','metting_end_time','metting_start_time']);
             if(empty($meetData)){
-                abort(400, '会议信息不存在！');
+                client_error('会议信息不存在！');
             }
             $res = array_merge($roomData, $meetData);
             $res['room_uses'] = isset(Room::$room_uses_map[$roomData['uses']]) ? : '';
@@ -42,7 +42,7 @@ class SeizeService
                 if($result['code'] == 1){
                     return $res;
                 }
-                abort(500, $result['msg']);
+                server_error($result['msg']);
             }
             $now = date('H:i:s',time());
             if($meetData['metting_start_time'] > $now){
@@ -52,7 +52,7 @@ class SeizeService
             $mettingSeizeTime = date('Y-m-d H:i:s', time());
             $res['metting_seize_time'] = $mettingSeizeTime;
         }catch(Exception $e){
-            abort(500, '抢占会议室信息获取失败:'.$e->getMessage());
+            server_error('抢占会议室信息获取失败:'.$e->getMessage());
         }
         return $res;
     }
@@ -74,7 +74,7 @@ class SeizeService
             $cquery = new Config();
             $cData = $cquery->info('seize_rules');
             if(empty($cData)){
-                abort(500,'seize_rules配置不存在！');
+                server_error('seize_rules配置不存在！');
             }
             $config = json_decode($cData['value'], true);
             $ruleWeek = $config['weeks'];
@@ -111,7 +111,7 @@ class SeizeService
                 }
             }
         }catch(Exception $e){
-            abort(500,'抢占会议室配置信息获取失败！'.$e->getMessage());
+            server_error('抢占会议室配置信息获取失败！'.$e->getMessage());
         }
         return $res;
     }

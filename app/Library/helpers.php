@@ -49,3 +49,23 @@ if (!function_exists('user_id')) {
         return $_SERVER['X_USER_ID'] ?? 0;
     }
 }
+
+if (!function_exists('client_error')) {
+    /**
+     * 客户端错误｜请求端错误
+     * @param $message
+     */
+    function client_error($message) {
+        throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException($message);
+    }
+}
+
+if (!function_exists('server_error')) {
+    /**
+     * 服务端错误
+     * @param $message
+     */
+    function server_error($message) {
+        throw new \Symfony\Component\HttpKernel\Exception\HttpException(500, $message);
+    }
+}
