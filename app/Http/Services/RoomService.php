@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 20:20:53
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-07 01:32:24
+ * @LastEditTime: 2021-08-07 01:40:19
  * @LastEditors: EricZhou
  * @Description: 会议室服务
  */
@@ -28,12 +28,12 @@ class RoomService extends IndexService
         $roomData = [];
         try{
             $rquery = new Room();
-            $roomData = $rquery->info('id', $data['id']);
+            $roomData = $rquery->info(['id' => $data['id']]);
             if(empty($roomData)){
                 abort(self::RET_FAIL, '会议室信息不存在！');
             }
             $reQuery = new Region();
-            $reData = $reQuery->info('id', $roomData['region_id'], ['area_name']);
+            $reData = $reQuery->info(['id' => $roomData['region_id']], ['area_name']);
             $roomData['region_name'] = $reData['area_name'];
             $roomData['room_uses'] = isset(Room::$room_uses_map[$roomData['uses']]) ? : '';
         }catch(\Exception $e){
@@ -54,12 +54,12 @@ class RoomService extends IndexService
         $res = [];
         try{
             $rquery = new Room();
-            $roomData = $rquery->info('id', $data['id'],['id as room_id','name','floor','capacity','uses']);
+            $roomData = $rquery->info(['id' => $data['id']],['id as room_id','name','floor','capacity','uses']);
             if(empty($roomData)){
                 abort(self::RET_FAIL, '会议室信息不存在！');
             }
             $mquery = new Metting();
-            $meetData = $mquery->info('room_id', $roomData['room_id'], ['id as metting_id','subject','moderator','metting_end_time']);
+            $meetData = $mquery->info(['room_id'=> $roomData['room_id']], ['id as metting_id','subject','moderator','metting_end_time']);
             if(empty($meetData)){
                 abort(self::RET_FAIL, '会议信息不存在！');
             }

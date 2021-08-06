@@ -17,9 +17,9 @@ class Metting extends Model
      * @return {*}
      * @description: 会议详情
      */    
-    public function info($key, $condition, $fileds = ['*']){
+    public function info($condition = ['id' => 0], $fileds = ['*']){
         $query = self::query();
-        $data = $query->where($key,$condition)->get($fileds)->first();
+        $data = $query->where($condition)->get($fileds)->first();
         return collect($data)->toArray();
     }
 }

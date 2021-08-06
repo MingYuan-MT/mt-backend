@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 20:20:53
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-07 01:05:08
+ * @LastEditTime: 2021-08-07 01:42:06
  * @LastEditors: EricZhou
  * @Description: 会议服务
  */
@@ -26,12 +26,12 @@ class MettingService extends IndexService
         $res = [];
         try{
             $mquery = new Metting();
-            $meetData = $mquery->info('id', $data['id']);
+            $meetData = $mquery->info(['id' => $data['id']]);
             if(empty($meetData)){
                 abort(self::RET_FAIL, '会议信息不存在！');
             }
             $rquery = new Room();
-            $roomData = $rquery->info('id', $meetData['room_id'], 'name');
+            $roomData = $rquery->info(['id' => $meetData['room_id']], 'name');
             if(empty($roomData)){
                 abort(self::RET_FAIL, '会议室信息不存在！');
             }
@@ -59,12 +59,12 @@ class MettingService extends IndexService
         $res = [];
         try{
             $mquery = new Metting();
-            $meetData = $mquery->info('id', $data['id']);
+            $meetData = $mquery->info(['id' => $data['id']]);
             if(empty($meetData)){
                 abort(self::RET_FAIL, '会议信息不存在！');
             }
             $rquery = new Room();
-            $roomData = $rquery->info('id', $meetData['room_id']);
+            $roomData = $rquery->info(['id' => $meetData['room_id']]);
             if(empty($roomData)){
                 abort(self::RET_FAIL, '会议室信息不存在！');
             }
