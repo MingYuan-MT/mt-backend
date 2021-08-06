@@ -9,16 +9,17 @@
 namespace App\Http\Services;
 
 use App\Models\User;
+use JetBrains\PhpStorm\ArrayShape;
 
 class LoginService
 {
     /**
+     * 登陆&注册
      * @param $params
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     * @return array
      */
-    public function login($params)
+    #[ArrayShape(['token' => "string"])] public function login($params): array
     {
-        $token =  User::login($params);
-        return ['token' => $token];
+        return ['token' => User::login($params)];
     }
 }

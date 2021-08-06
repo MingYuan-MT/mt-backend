@@ -8,11 +8,18 @@
 
 namespace App\Http\Controllers\MiniApi;
 
+use App\Http\Controllers\MiniApiController;
 use App\Http\Services\LoginService;
+use JetBrains\PhpStorm\ArrayShape;
 
-class LoginController extends CommonController
+class LoginController extends MiniApiController
 {
-    public function login(LoginService $service)
+    /**
+     * 登陆&注册
+     * @param LoginService $service
+     * @return array
+     */
+    #[ArrayShape(['token' => "string"])] public function login(LoginService $service): array
     {
         $params = $this->getParams(
             [

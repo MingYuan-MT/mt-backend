@@ -8,9 +8,10 @@
 
 namespace App\Http\Controllers\MiniApi;
 
+use App\Http\Controllers\MiniApiController;
 use App\Http\Services\SigningService;
 
-class SigningController extends CommonController
+class SigningController extends MiniApiController
 {
     /**
      * @return mixed

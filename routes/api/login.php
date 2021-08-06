@@ -8,6 +8,9 @@
 
 use \Illuminate\Support\Facades\Route;
 
+/*
+ | 登陆
+ */
 Route::prefix('login')->group(function () {
-    Route::post('login', 'LoginController@login');
+    Route::post('login', 'LoginController@login'); // 登陆&注册
 });
