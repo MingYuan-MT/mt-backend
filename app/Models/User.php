@@ -15,9 +15,9 @@ class User extends Authenticatable
 
     /**
      * @param $data
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     * @return string
      */
-    public static function login($data)
+    public static function login($data): string
     {
         $user = self::query()->updateOrCreate([
             'mobile' => arr_value($data, 'mobile'),
@@ -27,11 +27,9 @@ class User extends Authenticatable
             'created_by' => arr_value($data, 'created_by', ''),
             'modified_by' => arr_value($data, 'modified_by', ''),
         ]);
-        dd(Auth::guard('api')->loginUsingId($user->id));
         $api_token = rand_str();
         $user->api_token = $api_token;
         $user->save();
-
         return $api_token;
     }
 }
