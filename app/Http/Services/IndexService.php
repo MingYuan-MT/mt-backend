@@ -11,6 +11,25 @@ namespace App\Http\Services;
 
 class IndexService
 {
+
+    /**
+     * 成功返回码
+     * @var int
+     */
+    const RET_SUCC = 0;
+
+    /**
+     * 失败返回码
+     * @var int
+     */
+    const RET_FAIL = -1;
+
+    /**
+     * 失败返回码
+     * @var int
+     */
+    const RET_SERVER_FAIL = 500;
+
     /**
      * @param $params
      * @return string[]
