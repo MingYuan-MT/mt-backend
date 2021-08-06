@@ -1,0 +1,13 @@
+version: '3.5'
+
+services:
+    app:
+        image: jaderh/docker-nginx-php-supervisor:mt
+        ports:
+            - 80:80
+            - 443:443
+        environment:
+            TZ: Asia/Shanghai
+        volumes:
+            - ./:/webser/www/mt-backend
+            - ./mt-backend.conf:/etc/nginx/conf.d/mt-backend.conf
