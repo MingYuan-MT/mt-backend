@@ -46,7 +46,7 @@ Route::group(['prefix' => '/metting'], function () {
     Route::post('/update','MettingController@update');
 
     //会议信息确认
-    Route::get('/update','MettingController@update');
+    Route::get('/confirm','MettingController@confirm');
 
 });
 
@@ -58,6 +58,9 @@ Route::group(['prefix' => '/room'], function () {
     // 获取可抢占的会议室信息
     Route::get('/seizeInfomation','RoomController@seizeInfomation');
 
+    // 确认抢占会议室
+    Route::get('/seize/confirm','RoomController@seizeConfirm');
+    
     //更新会议室信息
     Route::post('/update','RoomController@update');
 
