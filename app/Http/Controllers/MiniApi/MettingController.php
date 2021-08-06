@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 20:17:55
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-07 00:19:48
+ * @LastEditTime: 2021-08-07 01:20:47
  * @LastEditors: EricZhou
  * @Description: file content
  */
@@ -66,17 +66,5 @@ class MettingController extends CommonController
      */
     public function update(MettingService $service){
         
-    }
-
-    /**
-     * @title: 抢占会议室
-     * @path: v1/metting/seize
-     * @author: EricZhou
-     * @param {MettingService} $service
-     * @return {*}
-     * @description: 
-     */
-    public function seize(MettingService $service){
-
     }
 }

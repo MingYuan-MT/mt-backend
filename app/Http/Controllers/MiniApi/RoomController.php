@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 22:28:44
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-07 00:21:44
+ * @LastEditTime: 2021-08-07 01:21:12
  * @LastEditors: EricZhou
  * @Description: 会议室
  */
@@ -38,7 +38,7 @@ class RoomController extends CommonController
     
     /**
      * @title: 根据会议室id获取会议室的可抢占信息
-     * @path: 
+     * @path: /v1/room/seizeInfomation
      * @author: EricZhou
      * @param {RoomService} $service
      * @return {*}
@@ -70,14 +70,14 @@ class RoomController extends CommonController
     }
 
     /**
-     * @title: 抢占会议室
-     * @path: v1/metting/seize
+     * @title: 确认抢占会议室
+     * @path: v1/room/seize/confirm
      * @author: EricZhou
-     * @param {RoomService} $service
+     * @param {MettingService} $service
      * @return {*}
      * @description: 
      */
-    public function seize(RoomService $service){
+    public function seizeConfirm(RoomService $service){
 
     }
 }
