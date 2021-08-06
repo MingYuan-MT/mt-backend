@@ -15,6 +15,8 @@ class Room extends Model
      * @description: 会议室详情
      */    
     public function info($key, $condition, $fileds = '*'){
-        return $this->where($key,$condition)->get($fileds)->first()->toArray();
+        $query = self::query();
+        $data = $query->where($key,$condition)->get($fileds)->first();
+        return collect($data)->toArray();
     }
 }

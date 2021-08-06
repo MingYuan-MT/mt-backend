@@ -54,8 +54,5 @@ Route::group(['prefix' => '/room'], function () {
     
     //会议室抢占
     Route::post('/seize','RoomController@seize');
-    
-    // 抢占成功界面
-    // 抢占未满足条件界面
-    // 记录抢占行为日志
+   
 });

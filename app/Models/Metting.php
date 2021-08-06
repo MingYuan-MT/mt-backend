@@ -18,6 +18,8 @@ class Metting extends Model
      * @description: 会议详情
      */    
     public function info($key, $condition, $fileds = '*'){
-        return $this->where($key,$condition,$fileds)->first()->toArray();
+        $query = self::query();
+        $data = $query->where($key,$condition)->get($fileds)->first();
+        return collect($data)->toArray();
     }
 }

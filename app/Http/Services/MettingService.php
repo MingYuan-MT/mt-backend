@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 20:20:53
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-06 22:22:25
+ * @LastEditTime: 2021-08-06 23:10:00
  * @LastEditors: EricZhou
  * @Description: 会议服务
  */
@@ -13,7 +13,7 @@ namespace App\Http\Services;
 use App\Models\Metting;
 use App\Models\Room;
 
-class MettingService
+class MettingService extends IndexService
 {
     /**
      * @title: 
@@ -24,18 +24,28 @@ class MettingService
      * @description: 
      */
     public function info($data = []){
-        $mquery = new Metting();
-        $meetData = $mquery->info('id', $data['id']);
-
-        $rquery = new Room();
-        $roomData = $rquery->info('id', $meetData['room_id'], 'name');
-        $data = [
-            'room_name' => $roomData['name'],
-            'subject' => $meetData['subject'],
-            'metting_moderator' =>$meetData['moderator'],
-            'metting_strat_time' => $meetData['metting_strat_time'],
-            'metting_end_time' => $meetData['metting_end_time']
-        ];
-        return $data;
+        $res = [];
+        try{
+            $mquery = new Metting();
+            $meetData = $mquery->info('id', $data['id']);
+            if(empty($meetData)){
+                abort(self::RET_FAIL, '会议信息不存在！');
+            }
+            $rquery = new Room();
+            $roomData = $rquery->info('id', $meetData['room_id'], 'name');
+            if(empty($roomData)){
+                abort(self::RET_FAIL, '会议室信息不存在！');
+            }
+            $res = [
+                'room_name' => $roomData['name'],
+                'subject' => $meetData['subject'],
+                'metting_moderator' =>$meetData['moderator'],
+                'metting_strat_time' => $meetData['metting_strat_time'],
+                'metting_end_time' => $meetData['metting_end_time']
+            ];
+        }catch(\Exception $e){
+            abort(self::RET_SERVER_FAIL,'会议详情获取失败:'.$e->getMessage());
+        }
+        return $res;
     }
 }
