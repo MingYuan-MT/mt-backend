@@ -8,8 +8,9 @@
 
 use \Illuminate\Support\Facades\Route;
 
-Route::get('info', 'SigningController@info');
-
+/*
+ | 签到
+ */
 Route::prefix('signing')->group(function () {
     Route::get('list', 'SigningController@list'); // 获取需要签到的会议列表
     Route::get('info', 'SigningController@info'); // 获取签到二维码

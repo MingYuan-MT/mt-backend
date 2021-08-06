@@ -1,21 +1,20 @@
 <?php
 /**
- * @Description :
+ * @Description : 基类控制器
  *
  * @Date        : 2021/8/3 1:49 下午
  * @Author      : Jade
  */
 
-namespace App\Http\Controllers\MiniApi;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class CommonController  extends BaseController
+class MiniApiController  extends BaseController
 {
     use ValidatesRequests;
 

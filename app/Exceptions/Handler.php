@@ -2,8 +2,12 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -44,55 +48,72 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param Throwable $e
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|Response|\Symfony\Component\HttpFoundation\Response
+     * @return Application|ResponseFactory|JsonResponse|Response|\Symfony\Component\HttpFoundation\Response
      */
-    public function render($request, Throwable $e)
+    public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response|Application|ResponseFactory
     {
         if ($e instanceof BadRequestHttpException) {
-            return response([
-                'message' => $e->getMessage(),
+            $content = [
                 'code' => $e->getStatusCode(),
+                'message' => $e->getMessage(),
                 'error' => [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
                     'trace' => $e->getTrace(),
                 ],
                 'data' => '',
-            ], $e->getStatusCode());
+            ];
+            if (!config('app.debug')) {
+                $content['error'] = '';
+            }
+            return response($content, $e->getStatusCode());
         } elseif ($e instanceof NotFoundHttpException) {
-            return response([
+            $content = [
+                'code' => $e->getStatusCode(),
                 'message' => '未找到',
-                'code' => $e->getStatusCode(),
                 'error' => [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
                     'trace' => $e->getTrace(),
                 ],
                 'data' => '',
-            ], $e->getStatusCode());
+            ];
+            if (!config('app.debug')) {
+                $content['error'] = '';
+            }
+            return response($content, $e->getStatusCode());
         } elseif ($e instanceof HttpException) {
-            return response([
-                'message' => $e->getMessage(),
+            $content = [
                 'code' => $e->getStatusCode(),
+                'message' => $e->getMessage(),
                 'error' => [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
                     'trace' => $e->getTrace(),
                 ],
                 'data' => '',
-            ], $e->getStatusCode());
+            ];
+            if (!config('app.debug')) {
+                $content['error'] = '';
+            }
+            return response($content, $e->getStatusCode());
         } else {
-            return response([
-                'message' => $e->getMessage(),
+            $content = [
                 'code' => 500,
+                'message' => $e->getMessage(),
                 'error' => [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
                     'trace' => $e->getTrace(),
                 ],
-            ], 500);
+                'data' => '',
+            ];
+            if (!config('app.debug')) {
+                $content['error'] = '';
+            }
+            return response($content, 500);
         }
     }
 }
