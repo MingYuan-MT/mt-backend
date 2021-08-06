@@ -52,15 +52,14 @@ Route::group(['prefix' => '/metting'], function () {
 
 // 会议室信息
 Route::group(['prefix' => '/room'], function () {
-    // 获取会议室信息
-    Route::get('/info','RoomController@info');
+
 
     // 获取可抢占的会议室信息
     Route::get('/seizeInfomation','RoomController@seizeInfomation');
 
     // 确认抢占会议室
     Route::get('/seize/confirm','RoomController@seizeConfirm');
-    
+
     //更新会议室信息
     Route::post('/update','RoomController@update');
 
