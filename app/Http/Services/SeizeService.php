@@ -27,32 +27,32 @@ class SeizeService
             $rquery = new Room();
             $roomData = $rquery->info(['id' => $data['id']],['id as room_id','name','floor','capacity','uses']);
             if(empty($roomData)){
-                abort(400, '会议室信息不存在！');
+                abort(self::RET_FAIL, '会议室信息不存在！');
             }
-
+            
             $mquery = new Metting();
-            $meetData = $mquery->info(['room_id'=> $roomData['room_id']], ['id as metting_id','subject','moderator','metting_end_time','metting_start_time']);
+            $meetData = $mquery->info(['room_id'=> $roomData['room_id']], ['id as metting_id','subject','moderator','metting_start_time','metting_end_time']);
             if(empty($meetData)){
-                abort(400, '会议信息不存在！');
+                abort(self::RET_FAIL, '会议信息不存在！');
             }
             $res = array_merge($roomData, $meetData);
             $res['room_uses'] = isset(Room::$room_uses_map[$roomData['uses']]) ? : '';
             $result = $this->seizeRulesValidate($res['metting_start_time']);
+            $res['seize_code'] = $result['code'];
+            $res['seize_msg'] = $result['msg'];
             if(!$result['res']){
-                if($result['code'] == 1){
+                if($result['code'] == 3){
                     return $res;
                 }
-                abort(500, $result['msg']);
+                abort(self::RET_FAIL,$result['msg']);
             }
-            $now = date('H:i:s',time());
-            if($meetData['metting_start_time'] > $now){
-                $res['seize_start_time'] = $now;
-                $res['seize_end_time'] = $meetData['metting_start_time'];
+            $now = date('Y-m-d H:i:s',time());
+            if($now > $meetData['metting_start_time']){
+                $res['seize_start_time']    = $now;
+                $res['seize_end_time']      = $meetData['metting_end_time'];
             }
-            $mettingSeizeTime = date('Y-m-d H:i:s', time());
-            $res['metting_seize_time'] = $mettingSeizeTime;
-        }catch(Exception $e){
-            abort(500, '抢占会议室信息获取失败:'.$e->getMessage());
+        }catch(\Exception $e){
+            abort(self::RET_SERVER_FAIL, '抢占会议室信息获取失败:'.$e->getMessage());
         }
         return $res;
     }
@@ -62,8 +62,7 @@ class SeizeService
      * @param $metting_start_time
      * @return array
      */
-    private function seizeRulesValidate($metting_start_time): array
-    {
+    private function seizeRulesValidate($metting_start_time):array {
         $res = [
             'res' =>true,
             'code' => 0,
@@ -74,27 +73,18 @@ class SeizeService
             $cquery = new Config();
             $cData = $cquery->info('seize_rules');
             if(empty($cData)){
-                abort(500,'seize_rules配置不存在！');
+                abort(self::RET_FAIL,'seize_rules配置不存在！');
             }
             $config = json_decode($cData['value'], true);
             $ruleWeek = $config['weeks'];
             $ruleHours = $config['hours'];
-            $time = strtotime($metting_start_time) - time();
-
-            if($time >= 10 * 60 === false){
-                return [
-                    'res' => false,
-                    'code' => 1,
-                    'msg' => '会议即将开始，不可抢占！'
-                ];
-            }
 
             // 星期校验
             $week = date('w');
             if(array_search($week,$ruleWeek) === false){
                 return [
                     'res' => false,
-                    'code' => 2,
+                    'code' => 1,
                     'msg' => '不在规定的可抢占[星期]内!'
                 ];
             }
@@ -102,16 +92,25 @@ class SeizeService
             // 时间段校验
             foreach ($ruleHours as $hour){
                 $between = explode(",",$hour);
-                if(!(date('H:i:s', time()) >= $between[0] && date('H:i:s', time()) <= $between[1])){
-                    return [
-                        'res' => false,
-                        'code' => 3,
-                        'msg' => '不在规定的可抢占[时间段]内!'
-                    ];
+                if(date('H:i:s', time()) >= $between[0] && date('H:i:s', time()) <= $between[1]){
+                    break;
                 }
+                return [
+                    'res' => false,
+                    'code' => 2,
+                    'msg' => '不在规定的可抢占[时间段]内!'
+                ];
+            }
+
+            if (strtotime($metting_start_time) > time() && strtotime($metting_start_time) - time() < 600) {
+                return [
+                    'res' => false,
+                    'code' => 3,
+                    'msg' => '会议即将开始，不可抢占！'
+                ];
             }
         }catch(Exception $e){
-            abort(500,'抢占会议室配置信息获取失败！'.$e->getMessage());
+            abort(self::RET_FAIL,'抢占会议室配置信息获取失败！'.$e->getMessage());
         }
         return $res;
     }
