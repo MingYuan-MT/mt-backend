@@ -19,9 +19,6 @@ use App\Models\Room;
 class MettingService extends IndexService
 {
     /**
-
-     * @title:
-     * @path:
      * @title:
      * @author: EricZhou
      * @param {*} $data 字段与值对应
@@ -116,16 +113,19 @@ class MettingService extends IndexService
 
     public function update($params)
     {
-        $metting = Metting::find($params['id']);
-        if($metting){
-            $metting->update([
-                'subject' => $params['subject'],
-                'moderator' => $params['moderator'],
-                'updated_by' => '周磊',
-            ]);
-            return ['message' =>'更新成功'];
+        try {
+            $metting = Metting::find($params['id']);
+            if($metting){
+                $metting->update([
+                    'subject' => $params['subject'],
+                    'moderator' => $params['moderator'],
+                    'updated_by' => '周磊',
+                ]);
+                return ['message' =>'更新成功'];
+            }
+            return ['message' =>'会议不存在'];
+        }catch(\Exception $e){
+            abort(self::RET_SERVER_FAIL,'会议更新失败:'.$e->getMessage());
         }
-        return ['message' =>'会议不存在'];
-
     }
 }
