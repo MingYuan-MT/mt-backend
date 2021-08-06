@@ -20,7 +20,7 @@ class MettingController extends CommonController
      * @author: EricZhou
      * @param {metting_id}
      * @return {json}
-     * @description: 
+     * @description:
      */
     public function info(MettingService $service){
          $params = $this->getParams(
@@ -41,10 +41,24 @@ class MettingController extends CommonController
      * @author: EricZhou
      * @param {MettingService} $service
      * @return {*}
-     * @description: 
+     * @description:
      */
-    public function update(MettingService $service){
-        
+    public function update(MettingService $service)
+    {
+        $params = $this->getParams(
+            [
+                'id' => 'required|int',
+                'subject'  => 'required',
+                'moderator'  => 'required',
+            ],
+            [
+                'id.required' => '会议ID不能为空',
+                'id.int' => '会议ID必须为数字',
+                'subject.required' => '会议主题不能为空',
+                'moderator.required' => '会议主主持人不能为空',
+            ]
+        );
+        return $service->update($params);
     }
 
     /**
@@ -53,9 +67,28 @@ class MettingController extends CommonController
      * @author: EricZhou
      * @param {MettingService} $service
      * @return {*}
-     * @description: 
+     * @description:
      */
     public function seize(MettingService $service){
 
+    }
+
+
+    public function save(MettingService $service)
+    {
+        $params = $this->getParams(
+            [
+                'room_id' => 'required|int',
+                'start_time'  => 'required',
+                'end_time'  => 'required',
+            ],
+            [
+                'room_id.required' => '会议室ID不能为空',
+                'room_id.int' => '会议室ID必须为数字',
+                'start_time.required' => '会议开始时间不能为空',
+                'end_time.required' => '会议结束时间不能为空',
+            ]
+        );
+        return $service->save($params);
     }
 }

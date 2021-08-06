@@ -47,4 +47,12 @@ Route::group(['prefix' => '/metting'], function () {
     // 抢占成功界面
     // 抢占未满足条件界面
     // 记录抢占行为日志
+
+    Route::post('/save','MettingController@save');
+});
+
+// 会议室信息
+Route::group(['prefix' => '/room'], function () {
+    // 获取会议室信息
+    Route::get('/list','RoomController@list');
 });
