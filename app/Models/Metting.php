@@ -17,7 +17,7 @@ class Metting extends Model
      * @return {*}
      * @description: 会议详情
      */    
-    public function info($filed, $condition){
-        return $this->where($filed,$condition)->first()->toArray();
+    public function info($key, $condition, $fileds = '*'){
+        return $this->where($key,$condition,$fileds)->first()->toArray();
     }
 }
