@@ -25,7 +25,7 @@
  * @
  * @     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * @
- * @               神兽保佑            永无BUG
+ * @               神兽保佑            永无BUG               
  */
 
 use \Illuminate\Support\Facades\Route;
@@ -39,8 +39,14 @@ Route::group(['prefix' => '/metting'], function () {
     // 获取会议信息
     Route::get('/info','MettingController@info');
 
+    // 获取会议室会议信息
+    Route::get('/infomation','MettingController@infomation');
+
     //更新会议信息
     Route::post('/update','MettingController@update');
+
+    //会议信息确认
+    Route::get('/update','MettingController@update');
 
 });
 
@@ -48,6 +54,9 @@ Route::group(['prefix' => '/metting'], function () {
 Route::group(['prefix' => '/room'], function () {
     // 获取会议室信息
     Route::get('/info','RoomController@info');
+
+    // 获取可抢占的会议室信息
+    Route::get('/seizeInfomation','RoomController@seizeInfomation');
     
     //更新会议室信息
     Route::post('/update','RoomController@update');

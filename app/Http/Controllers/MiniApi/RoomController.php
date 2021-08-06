@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 22:28:44
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-06 22:31:07
+ * @LastEditTime: 2021-08-07 00:21:44
  * @LastEditors: EricZhou
  * @Description: 会议室
  */
@@ -33,6 +33,28 @@ class RoomController extends CommonController
             ]
         );
         return $service->info($params);
+    }
+
+    
+    /**
+     * @title: 根据会议室id获取会议室的可抢占信息
+     * @path: 
+     * @author: EricZhou
+     * @param {RoomService} $service
+     * @return {*}
+     * @description: 
+     */
+    public function seizeInfomation(RoomService $service){
+        $params = $this->getParams(
+            [
+                'id' => 'required|int'
+            ],
+            [
+                'id.required' => '会议室ID不能为空',
+                'id.int' => '会议室ID必须为数字',
+            ]
+        );
+        return $service->seizeInfomation($params);
     }
 
     /**
