@@ -15,5 +15,7 @@ Route::prefix('seize')->group(function () {
     // 通过二维码展示当前会议室会议信息
     Route::get('metting-info','SeizeController@mettingInfo'); 
     // 确认抢占
-    Route::post('confirm','SeizeController@confirm'); 
+    Route::post('confirm','SeizeController@confirm');
+    // 获取抢占二维码
+    Route::get('scan-code','SeizeController@scanCode');  
 });

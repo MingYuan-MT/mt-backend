@@ -11,7 +11,7 @@ class Metting extends Model
     use HasFactory;
 
     protected $table = 'mettings';
-    protected $fillable = ['room_id','subject','is_need_sign','moderator_id','moderator','seize_user_id','seize_time','metting_start_time','metting_end_time','remark','update_by','is_deleted','status','created_by'];
+    protected $fillable = ['room_id', 'subject', 'is_need_sign', 'moderator_id', 'moderator', 'seize_user_id', 'seize_time', 'metting_start_time', 'metting_end_time', 'remark', 'update_by', 'is_deleted', 'status', 'created_by'];
 
     const METTING_STATUS_DEFAULT = 0;
     const METTING_STATUS_ONGOING = 1;
@@ -28,21 +28,22 @@ class Metting extends Model
     ];
 
     /**
-     * @author: EricZhou
      * @param {*} $filed
      * @return {*}
      * @description: 会议详情
+     * @author: EricZhou
      */
-    public function info($condition = ['id' => 0], $fileds = ['*']){
+    public function info($condition = ['id' => 0], $fileds = ['*'])
+    {
         $query = self::query();
         $data = $query->where($condition)->get($fileds)->first();
-        return json_decode(json_encode(collect($data)->toArray(),true),true);
+        return json_decode(json_encode(collect($data)->toArray(), true), true);
     }
 
     public static function getRoomIds($condition)
     {
-       $data = self::query()->where($condition)->get('room_id')->toArray();
-       return array_column($data,'room_id');
+        $data = self::query()->where($condition)->get('room_id')->toArray();
+        return array_column($data, 'room_id');
     }
 
     public static function add($params)
@@ -54,19 +55,30 @@ class Metting extends Model
     /**
      * @title: 会议抢占记录
      * @path:
-     * @author: EricZhou
      * @param {*} $condition
      * @return {*}
      * @description:
+     * @author: EricZhou
      */
-    public static function useLogRecords($condition = ['id' => 0]){
+    public static function useLogRecords($condition = ['id' => 0])
+    {
         $data = DB::table('mettings as m')
             ->leftJoin('users as u', 'u.id', '=', 'm.seize_user_id')
             ->leftJoin('rooms as r', 'r.id', '=', 'm.room_id')
-            ->select('r.name as room_name','u.name as size_name','m.seize_time')
+            ->select('r.name as room_name', 'u.name as size_name', 'm.seize_time')
             ->where($condition)
             ->get();
 
-        return json_decode(json_encode(collect($data)->toArray(),true),true);
+        return json_decode(json_encode(collect($data)->toArray(), true), true);
+    }
+
+    public static function getInfo($condition)
+    {
+        return self::query()
+            ->leftJoin('rooms', 'rooms.id', '=', 'mettings.room_id')
+            ->where($condition)
+            ->select(['mettings.id','moderator','subject','name','uses','capacity','metting_start_time','metting_end_time','projection_mode'])
+            ->first()
+            ->toArray();
     }
 }

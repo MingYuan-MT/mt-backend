@@ -48,8 +48,8 @@ class SeizeController extends MiniApiController
                 'subject'               => 'required|string',
             ],
             [
-                'metting_id.required'   => '会议室ID不能为空',
-                'metting_id.int'        => '会议室ID必须为数字',
+                'metting_id.required'   => '会议ID不能为空',
+                'metting_id.int'        => '会议ID必须为数字',
                 'room_id.required'      => '会议室ID不能为空',
                 'room_id.int'           => '会议室ID必须为数字',
                 'subject.required'      => '主题不能为空',
@@ -58,5 +58,26 @@ class SeizeController extends MiniApiController
         );
         // return response()->json(['code'=>0,'msg'=>'抢占成功']);
         return $service->confirm($params);
+    }
+
+    /**
+     * @title: 获取抢占二维码
+     * @path: 
+     * @param {SeizeService} $service
+     * @return {*}
+     * @description: 
+     * @author: EricZhou
+     */
+    public function scanCode(SeizeService $service){
+         $params = $this->getParams(
+            [
+                'room_id' => 'required|int'
+            ],
+            [
+                'room_id.required'  => '会议室ID不能为空',
+                'room_id.int'       => '会议室ID必须为数字',
+            ]
+        );
+        return $service->scanCode($params);
     }
 }
