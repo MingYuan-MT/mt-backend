@@ -33,6 +33,7 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'url' => env('APP_URL') . '/v1/wechat/code?name=',
         ],
 
         'public' => [

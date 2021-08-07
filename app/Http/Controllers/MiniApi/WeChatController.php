@@ -18,6 +18,10 @@ class WeChatController extends MiniApiController
         dd($this->request->all());
     }
 
+    /**
+     * @param WeChatService $service
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response|void
+     */
     public function code(WeChatService $service)
     {
         $params = $this->getParams(

@@ -12,6 +12,7 @@ class User extends Authenticatable
 
     protected $guarded = ['id'];
     protected $table = 'users';
+    protected $fillable = ['name','id_number','mobile','seat_number','openid','api_token','is_deleted','update_by','status','created_by'];
 
     /**
      * 登陆&注册
@@ -22,7 +23,7 @@ class User extends Authenticatable
     {
         $api_token = rand_str();
         self::query()->updateOrCreate([
-            'openid' => arr_value($data, 'mobile'),
+            'openid' => arr_value($data, 'openid'),
         ], [
             'name' => arr_value($data, 'nick_name', ''),
             'api_token' => $api_token,

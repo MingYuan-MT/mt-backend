@@ -11,16 +11,31 @@ namespace App\Http\Services;
 use App\Library\WeChat\MiniProgram;
 use App\Models\Metting;
 use Illuminate\Support\Facades\Storage;
+use JetBrains\PhpStorm\ArrayShape;
 
 class SigningService
 {
 
-    public function list($params)
+    /**
+     * @param $params
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function lists($params): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-
+        $limit = arr_value($params, 'per_page', 10);
+        $user_id = user_id();
+        $query = Metting::query();
+        $query->where(['mettings.created_by' => $user_id, 'mettings.is_need_sign' => 1]);
+        $columns = ['mettings.id', 'mettings.room_id', 'mettings.subject', 'rooms.name', 'mettings.metting_start_time'];
+        $query->leftJoin('rooms', 'rooms.id', '=', 'mettings.room_id');
+        return $query->paginate($limit, $columns);
     }
 
-    public function code($params)
+    /**
+     * @param $params
+     * @return array
+     */
+    #[ArrayShape(['url' => "string"])] public function code($params): array
     {
         $query = Metting::query();
         $query->where(['id' => arr_value($params, 'metting_id/d', 0)]);
@@ -37,8 +52,9 @@ class SigningService
         // 生成小程序码
         $mini_program = new MiniProgram();
         $app_code = $mini_program->appCode($scene, $optional);
-        Storage::disk('local')->put(md5($scene).'.jpeg', $app_code);
-        return ['url' => Storage::url(md5($scene).'.jpeg')];
+        $storage = Storage::disk('local');
+        $storage->put(md5($scene).'.jpeg', $app_code);
+        return ['url' => $storage->url(md5($scene).'.jpeg')];
     }
 
     public function share($params)
