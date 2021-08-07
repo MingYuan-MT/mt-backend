@@ -17,5 +17,5 @@ Route::prefix('seize')->group(function () {
     // 确认抢占
     Route::post('confirm','SeizeController@confirm');
     // 获取抢占二维码
-    Route::get('scan-code','SeizeController@scanCode');  
+    Route::get('mini-code','SeizeController@miniCode');  
 });
