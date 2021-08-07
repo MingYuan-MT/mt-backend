@@ -106,7 +106,15 @@ class ReserveService
                 'created_by' => user_id(),
             ]);
             DB::commit();
-            return $metting;
+
+            //返回当前会议的信息
+            $meet = Metting::getInfo(['mettings.id' => $metting->id]);
+            $meet['uses_name'] =  Room::$room_uses_map[$meet['uses']];
+            $meet['projection_mode_name'] =  Room::$projection_mode_map[$meet['projection_mode']];
+            $meet['date'] = date('Y-m-d',strtotime($meet['metting_start_time']));
+            $meet['metting_start_time'] = date('H:i',strtotime($meet['metting_start_time']));
+            $meet['metting_end_time'] = date('H:i',strtotime($meet['metting_end_time']));
+            return $meet;
         } catch (\Exception $e) {
             DB::rollBack();
             server_error('会议预订失败:' . $e->getMessage());
