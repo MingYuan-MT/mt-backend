@@ -12,6 +12,7 @@ class User extends Authenticatable
 
     protected $guarded = ['id'];
     protected $table = 'users';
+    protected $fillable = ['name','id_number','mobile','seat_number','openid','api_token','is_deleted','update_by','status','created_by'];
 
     /**
      * 登陆&注册
