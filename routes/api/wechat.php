@@ -13,4 +13,5 @@ use \Illuminate\Support\Facades\Route;
  */
 Route::prefix('wechat')->group(function () {
     Route::any('callback', 'WeChatController@callback'); // 回调
+    Route::any('code', 'WeChatController@code'); // 回调
 });

@@ -10,6 +10,7 @@ namespace App\Http\Services;
 
 use App\Library\WeChat\MiniProgram;
 use App\Models\Metting;
+use Illuminate\Support\Facades\Storage;
 
 class SigningService
 {
@@ -29,14 +30,15 @@ class SigningService
             'metting_id' => $metting_id,
         ];
         // 加密
-        $scene = url;
+        $scene = http_build_query($metting_code);
         $optional = [
             'page' => 'pages/sign/signDetails/index'
         ];
         // 生成小程序码
         $mini_program = new MiniProgram();
         $app_code = $mini_program->appCode($scene, $optional);
-        dd($app_code);
+        Storage::disk('local')->put(md5($scene).'.jpeg', $app_code);
+        return ['url' => Storage::url(md5($scene).'.jpeg')];
     }
 
     public function share($params)

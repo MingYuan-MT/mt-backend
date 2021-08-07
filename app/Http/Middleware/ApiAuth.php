@@ -24,7 +24,7 @@ class ApiAuth
      */
     public function handle(Request $request, Closure $next, string $guard = null): mixed
     {
-        if (in_array($request->getPathInfo(), ['/v1/login/login', '/v1/login/wechat-auth', '/v1/wechat/callback'])) {
+        if (in_array($request->getPathInfo(), ['/v1/login/login', '/v1/login/wechat-auth', '/v1/wechat/callback', '/v1/wechat/code'])) {
             return $next($request);
         }
         $auth = Auth::guard('api');

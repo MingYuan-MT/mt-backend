@@ -10,6 +10,7 @@ namespace App\Http\Services;
 
 use App\Models\Metting;
 use App\Models\ReserveRecord;
+use App\Models\Metting;
 
 class MyService
 {
@@ -29,6 +30,32 @@ class MyService
             $item['metting_end_time'] = date('H:i',strtotime($item['metting_end_time']));
             $item['status'] = Metting::$metting_status_map[$item['status']];
         }
+        return $data;
+    }
+
+    /**
+     * @title: 会议抢占记录
+     * @path: 
+     * @author: EricZhou
+     * @param {*}
+     * @return {*}
+     * @description: 
+     */
+    public function useLogRecords()
+    {
+        $records = Metting::useLogRecords(['m.moderator_id' => user_id(), 'm.status' => Metting::METTING_STATUS_SEIZE]);
+        $record_count['month_times'] = 0;
+        $record_count['year_times'] = 0;
+        foreach ($records as $record) {
+            if(date('m',strtotime($record['seize_time']) == date('m'))){
+                $record_count['month_times'] ++;
+            }
+            if(date('y',strtotime($record['seize_time']) == date('y'))){
+                $record_count['year_times'] ++;
+            }
+        }
+        $data['record_count'] = $record_count;
+        $data['list']           = $records;
         return $data;
     }
 }

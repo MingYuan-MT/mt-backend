@@ -17,6 +17,6 @@ class Region extends Model
     public function info($condition = ['id' => 0], $fileds = ['*']){
         $query = self::query();
         $data = $query->where($condition)->get($fileds)->first();
-        return collect($data)->toArray();
+        return json_decode(json_encode(collect($data)->toArray(),true),true);;
     }
 }

@@ -29,7 +29,7 @@ class SeizeService
         $res = [];
         try{
             $rquery     = new Room();
-            $room_data  = $rquery->info(['id' => $data['id'], 'is_deleted' => 0],['id as room_id','name','floor','capacity','uses']);
+            $room_data  = $rquery->info(['id' => $data['id'], 'is_deleted' => 0],['id as room_id','name','floor','capacity','uses','remark']);
             if(empty($room_data)){
                 client_error('会议室信息不存在！');
             }
@@ -205,9 +205,12 @@ class SeizeService
 
             // 更新旧的会议信息
             $attributes = [
-                'is_deleted' => 1,
-                'remark' =>'用户'.user_id().'抢占',
-                'updated_by' => user_id()
+                'is_deleted'    => 1,
+                'remark'        =>'用户'.user_id().'抢占',
+                'status'        => Metting::METTING_STATUS_SEIZE,
+                'seize_user_id' => user_id(),
+                'seize_time'    => date('Y-m-d H:i:s'),
+                'updated_by'    => user_id()
             ];
             $update_row = $mquery->where(['id' => $metting_id])->update($attributes);
             if($update_row <= 0) {

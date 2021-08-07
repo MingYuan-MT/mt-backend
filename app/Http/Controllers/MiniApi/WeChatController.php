@@ -9,11 +9,25 @@
 namespace App\Http\Controllers\MiniApi;
 
 use App\Http\Controllers\MiniApiController;
+use App\Http\Services\WeChatService;
 
 class WeChatController extends MiniApiController
 {
     public function callback()
     {
         dd($this->request->all());
+    }
+
+    public function code(WeChatService $service)
+    {
+        $params = $this->getParams(
+            [
+                'name' => 'required'
+            ],
+            [
+                'name.required' => '文件名不能为空',
+            ]
+        );
+        return $service->code($params);
     }
 }
