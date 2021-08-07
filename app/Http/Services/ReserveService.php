@@ -123,8 +123,8 @@ class ReserveService
         foreach ($rooms as $room) {
             $room['uses_name'] = Room::$room_uses_map[$room['uses']];
             $room['projection_mode_name'] = Room::$projection_mode_map[$room['projection_mode']];
-            $room['start_time'] = $params['start_time'];
-            $room['end_time'] = $params['end_time'] ?? '';
+            $room['start_time'] = date('H:i',strtotime($params['start_time']));
+            $room['end_time'] = date('H:i',strtotime($params['end_time'])) ?? '';
             $room['is_need_sign'] = $params['is_need_sign'] ?? 0;
             $result[$room['build_name']][$room['floor'] . 'F'][] = $room;
         }
