@@ -13,6 +13,8 @@ use App\Models\Metting;
 use App\Models\Room;
 use App\Models\ReserveRecord;
 use Exception;
+use PDOException;
+use Illuminate\Support\Facades\DB;
 
 class SeizeService
 {
@@ -25,19 +27,21 @@ class SeizeService
     {
         $res = [];
         try{
-            $rquery = new Room();
-            $room_data = $rquery->info(['id' => $data['id']],['id as room_id','name','floor','capacity','uses']);
+            $rquery     = new Room();
+            $room_data  = $rquery->info(['id' => $data['id']],['id as room_id','name','floor','capacity','uses']);
             if(empty($room_data)){
                 client_error('会议室信息不存在！');
             }
 
-            $mquery = new Metting();
-            $meet_data = $mquery->info(['room_id'=> $room_data['room_id']], ['id as metting_id','subject','moderator','metting_start_time','metting_end_time','status as metting_status']);
+            $mquery     = new Metting();
+            $condition  = ['room_id'=> $room_data['room_id']];
+            $fileds     = ['id as metting_id','subject','moderator','metting_start_time','metting_end_time','status as metting_status'];
+            $meet_data  = $mquery->info($condition, $fileds);
             if(empty($meet_data)){
                 client_error('会议信息不存在！');
             }
             $res = array_merge($room_data, $meet_data);
-            $res['room_uses'] = Room::$room_uses_map[$room_data['uses']] ? : '';
+            $res['room_uses'] = Room::$room_uses_map[$room_data['uses']] ?? '';
             $seize_result = $this->seizeRulesValidate($res['metting_start_time'],$res['metting_end_time']);
             $res['seize_code'] = $seize_result['code'];
             $res['seize_msg'] = $seize_result['msg'];
@@ -109,7 +113,7 @@ class SeizeService
                 ];
             }
 
-            if (strtotime($metting_start_time) > time() && strtotime($metting_start_time) - time() < 600) {
+            if (strtotime($metting_start_time) > time() && strtotime($metting_start_time) - time() < 15 * 60) {
                 return [
                     'res' => false,
                     'code' => 3,
@@ -141,6 +145,11 @@ class SeizeService
     public function confirm(array $data = []){
         $room_id = $data['room_id'];
         $metting_id = $data['metting_id'];
-        
+        DB::beginTransaction();
+        try{
+            DB::commit();
+        }catch(PDOException $ex){
+            DB::rollBack();
+        }
     }
 }

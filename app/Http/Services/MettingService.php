@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 20:20:53
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-07 11:27:25
+ * @LastEditTime: 2021-08-07 11:43:44
  * @LastEditors: EricZhou
  * @Description: 会议服务
  */
@@ -27,21 +27,21 @@ class MettingService
         $res = [];
         try{
             $mquery = new Metting();
-            $meetData = $mquery->info('id', $data['id']);
-            if(empty($meetData)){
+            $meet_data = $mquery->info('id', $data['id']);
+            if(empty($meet_data)){
                 client_error('会议信息不存在！');
             }
             $rquery = new Room();
-            $roomData = $rquery->info('id', $meetData['room_id'], 'name');
-            if(empty($roomData)){
+            $room_data = $rquery->info('id', $meet_data['room_id'], 'name');
+            if(empty($room_data)){
                 client_error('会议室信息不存在！');
             }
             $res = [
-                'room_name' => $roomData['name'],
-                'subject' => $meetData['subject'],
-                'metting_moderator' =>$meetData['moderator'],
-                'metting_strat_time' => $meetData['metting_strat_time'],
-                'metting_end_time' => $meetData['metting_end_time']
+                'room_name' => $room_data['name'],
+                'subject' => $meet_data['subject'],
+                'metting_moderator' =>$meet_data['moderator'],
+                'metting_strat_time' => $meet_data['metting_strat_time'],
+                'metting_end_time' => $meet_data['metting_end_time']
             ];
         }catch(\Exception $e){
             server_error('会议详情获取失败:'.$e->getMessage());
@@ -59,25 +59,25 @@ class MettingService
     public function infomation($data = []){
         $res = [];
         try{
-            $mquery = new Metting();
-            $meetData = $mquery->info('id', $data['id']);
-            if(empty($meetData)){
+            $mquery     = new Metting();
+            $meet_data  = $mquery->info('id', $data['id']);
+            if(empty($meet_data)){
                 client_error('会议信息不存在！');
             }
-            $rquery = new Room();
-            $roomData = $rquery->info('id', $meetData['room_id']);
-            if(empty($roomData)){
+            $rquery     = new Room();
+            $room_data  = $rquery->info('id', $meet_data['room_id']);
+            if(empty($room_data)){
                 client_error('会议室信息不存在！');
             }
             $res = [
-                'room_floor' => $roomData['floor'],
-                'room_name' => $roomData['name'],
-                'room_capacity' => $roomData['capacity'],
-                'room_uses' => Room::$room_uses_map[$roomData['uses']] ? : '',
-                'subject' => $meetData['subject'],
-                'metting_moderator' =>$meetData['moderator'],
-                'metting_strat_time' => $meetData['metting_strat_time'],
-                'metting_end_time' => $meetData['metting_end_time']
+                'room_floor'    => $room_data['floor'],
+                'room_name'     => $room_data['name'],
+                'room_capacity' => $room_data['capacity'],
+                'room_uses'     => Room::$room_uses_map[$room_data['uses']] ?? '',
+                'subject'       => $meet_data['subject'],
+                'metting_moderator'     =>$meet_data['moderator'],
+                'metting_strat_time'    => $meet_data['metting_strat_time'],
+                'metting_end_time'      => $meet_data['metting_end_time']
             ];
         }catch(\Exception $e){
             server_error('会议详情获取失败:'.$e->getMessage());
