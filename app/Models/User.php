@@ -24,7 +24,6 @@ class User extends Authenticatable
             'openid' => arr_value($data, 'mobile'),
         ], [
             'name' => arr_value($data, 'nick_name', ''),
-            'openid' => arr_value($data, 'openid', ''),
             'api_token' => $api_token,
             'created_by' => arr_value($data, 'created_by', ''),
             'modified_by' => arr_value($data, 'modified_by', ''),
