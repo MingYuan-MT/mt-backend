@@ -19,8 +19,16 @@ class MyController extends MiniApiController
         return $service->records();
     }
 
+    /**
+     * @title: 查看用户的资源浪费记录
+     * @path: 
+     * @author: EricZhou
+     * @param {MyService} $service
+     * @return {*}
+     * @description: 
+     */
     public function useLog(MyService $service)
     {
-
+        return $service->useLogRecords();
     }
 }
