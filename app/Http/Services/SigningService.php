@@ -53,7 +53,7 @@ class SigningService
         // 加密
         $scene = http_build_query($metting_code);
         $optional = [
-            'page' => 'pages/sign/signDetails/index'
+            'page' => 'pages/sign/signDetails/index',
         ];
         // 生成小程序码
         $mini_program = new MiniProgram();
