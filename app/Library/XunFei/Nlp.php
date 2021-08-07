@@ -93,11 +93,11 @@ class Nlp
             'text' => $text,
         ];
         $url = $this->host . $api;
-        $response = $this->client::asForm()->timeout(15*60)->withHeaders($this->headers)->post($url, $data)
+        $response = $this->client::asForm()->timeout(30)->withHeaders($this->headers)->post($url, $data)
             ->collect();
         $result = $response->toArray();
         $row = [];
-        if ($result['code'] == 0 && !empty($result['data'])) {
+        if (!empty($result['data'])) {
             $row = array_shift($result['data']);
         }
         return $row;

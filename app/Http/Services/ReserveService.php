@@ -28,8 +28,11 @@ class ReserveService
     {
         switch ($type) {
             case 'condition':
+
                 break;
             case 'shake':
+                $params['start_time'] = date('Y-m-d H:i:s');
+                $params['end_time'] =  date("Y-m-d H:i:s", strtotime("+1 hour"));
                 break;
             case 'voice';
                 $this->voice($params);
@@ -181,6 +184,7 @@ class ReserveService
                 client_error('语音处理失败，请重新尝试');
             }
             $params['start_time'] = arr_value($unit_time_data, 'keyDate/s', '');
+            $params['end_time'] =  date('Y-m-d H:i:s', strtotime("+1 hour",strtotime($params['start_time'])));
         } catch (\Exception $e) {
             server_error($e->getMessage());
         }

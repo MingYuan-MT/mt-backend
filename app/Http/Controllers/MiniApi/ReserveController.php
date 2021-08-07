@@ -53,8 +53,6 @@ class ReserveController extends MiniApiController
                 'region.required' => '所在区域不能为空'
             ]
         );
-        $params['start_time'] = date('Y-m-d H:i:s');
-        $params['end_time'] =  date("Y-m-d H:i:s", strtotime("+1 hour"));
         return $service->lists('shake', $params);
     }
 
