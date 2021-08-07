@@ -82,12 +82,14 @@ class ReserveController extends MiniApiController
                 'room_id' => 'required|int',
                 'start_time'  => 'required',
                 'end_time'  => 'required',
+                'is_need_sign'  => 'required',
             ],
             [
                 'room_id.required' => '会议室ID不能为空',
                 'room_id.int' => '会议室ID必须为数字',
                 'start_time.required' => '会议开始时间不能为空',
                 'end_time.required' => '会议结束时间不能为空',
+                'is_need_sign.required' => '是否需要签到不能为空'
             ]
         );
         return $service->add($params);

@@ -10,7 +10,7 @@ class Metting extends Model
     use HasFactory;
 
     protected $table = 'mettings';
-    protected $fillable = ['room_id','subject','moderator_id','moderator','metting_start_time','metting_end_time','remark','update_by','is_deleted','status','created_by'];
+    protected $fillable = ['room_id','subject','moderator_id','moderator','metting_start_time','metting_end_time','remark','update_by','is_deleted','status','created_by','is_need_sign'];
 
     const METTING_STATUS_DEFAULT = 0;
     const METTING_STATUS_ONGOING = 1;
