@@ -14,6 +14,7 @@ use App\Models\Metting;
 use App\Models\ReserveRecord;
 use App\Models\Room;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use JetBrains\PhpStorm\ArrayShape;
 
 class ReserveService
@@ -82,7 +83,7 @@ class ReserveService
         try {
             $userId = user_id();
             $user = User::info(['id' => $userId]);
-
+            DB::beginTransaction();
             $metting = Metting::add([
                 'room_id' => $params['room_id'],
                 'subject' => $user['name'] . '预订的会议室',
@@ -91,6 +92,8 @@ class ReserveService
                 'metting_end_time' => $params['end_time'],
                 'status' => 0,
                 'created_by' => user_id(),
+                'moderator_id' => user_id(),
+                'is_need_sign' => $params['is_need_sign']
             ]);
             //会议室预订记录表
             ReserveRecord::add([
@@ -102,8 +105,10 @@ class ReserveService
                 'room_id' => $params['room_id'],
                 'created_by' => user_id(),
             ]);
+            DB::commit();
             return $metting;
         } catch (\Exception $e) {
+            DB::rollBack();
             server_error('会议预订失败:' . $e->getMessage());
         }
     }

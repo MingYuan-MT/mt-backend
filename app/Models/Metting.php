@@ -53,11 +53,11 @@ class Metting extends Model
 
     /**
      * @title: 会议抢占记录
-     * @path: 
+     * @path:
      * @author: EricZhou
      * @param {*} $condition
      * @return {*}
-     * @description: 
+     * @description:
      */
     public static function useLogRecords($condition = ['id' => 0]){
         $data = DB::table('mettings as m')
@@ -66,7 +66,7 @@ class Metting extends Model
             ->select('r.name as room_name','u.name as size_name','m.seize_time')
             ->where($condition)
             ->get();
-            
+
         return json_decode(json_encode(collect($data)->toArray(),true),true);
     }
 }
