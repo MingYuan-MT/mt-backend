@@ -12,8 +12,6 @@ namespace App\Http\Services;
 
 use App\Models\Metting;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use App\Models\Room;
 
 class MettingService extends IndexService
@@ -100,32 +98,12 @@ class MettingService extends IndexService
 
     public function save($params)
     {
-        $model = new  Metting();
-        $model->room_id = $params['room_id'];
-        $model->subject = '张力'.'预订的会议室';
-        $model->moderator = '张力';
-        $model->metting_strat_time = $params['start_time'];
-        $model->metting_end_time = $params['end_time'];
-        $model->status = 0;
-        $model->save();
-        return ['message' => '预订成功'];
+
+
     }
 
     public function update($params)
     {
-        try {
-            $metting = Metting::find($params['id']);
-            if($metting){
-                $metting->update([
-                    'subject' => $params['subject'],
-                    'moderator' => $params['moderator'],
-                    'updated_by' => '周磊',
-                ]);
-                return ['message' =>'更新成功'];
-            }
-            return ['message' =>'会议不存在'];
-        }catch(\Exception $e){
-            abort(self::RET_SERVER_FAIL,'会议更新失败:'.$e->getMessage());
-        }
+
     }
 }

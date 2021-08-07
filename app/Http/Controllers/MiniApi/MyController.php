@@ -16,7 +16,7 @@ class MyController extends MiniApiController
 
     public function reserve(MyService $service)
     {
-
+        return $service->records();
     }
 
     public function useLog(MyService $service)
