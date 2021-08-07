@@ -14,6 +14,7 @@ use App\Models\Room;
 use App\Models\ReserveRecord;
 use App\Models\User;
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
 use PDOException;
 use Illuminate\Support\Facades\DB;
 
@@ -27,10 +28,10 @@ class SeizeService
     public function mettingInfo(array $data = [])
     {
         $res = [];
-        try{
+        try {
             $rquery     = new Room();
-            $room_data  = $rquery->info(['id' => $data['id'], 'is_deleted' => 0],['id as room_id','name','floor','capacity','uses','remark']);
-            if(empty($room_data)){
+            $room_data  = $rquery->info(['id' => $data['id'], 'is_deleted' => 0], ['id as room_id','name','floor','capacity','uses','remark']);
+            if (empty($room_data)) {
                 client_error('会议室信息不存在！');
             }
 
@@ -38,23 +39,23 @@ class SeizeService
             $condition  = ['room_id'=> $room_data['room_id'], 'is_deleted' => 0];
             $fileds     = ['id as metting_id','subject','moderator','metting_start_time','metting_end_time','status as metting_status'];
             $meet_data  = $mquery->info($condition, $fileds);
-            if(empty($meet_data)){
+            if (empty($meet_data)) {
                 client_error('会议信息不存在！');
             }
             $res = array_merge($room_data, $meet_data);
             $res['room_uses'] = Room::$room_uses_map[$room_data['uses']] ?? '';
 
-            $seize_result = $this->seizeRulesValidate($res['metting_start_time'],$res['metting_end_time']);
+            $seize_result = $this->seizeRulesValidate($res['metting_start_time'], $res['metting_end_time']);
             $res['seize_code'] = $seize_result['code'];
             $res['seize_msg'] = $seize_result['msg'];
-            if(($seize_result['code'] != 0) || 
-                ($seize_result['code'] == 4 && in_array($meet_data['metting_status'],[
+            if (($seize_result['code'] != 0) ||
+                ($seize_result['code'] == 4 && in_array($meet_data['metting_status'], [
                 Metting::METTING_STATUS_DEFAULT,
                 Metting::METTING_STATUS_END,
-                Metting::METTING_STATUS_CANCEL]))){
+                Metting::METTING_STATUS_CANCEL]))) {
                 return $res;
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             server_error('抢占会议室信息获取失败:' . $e->getMessage());
         }
         return $res;
@@ -75,11 +76,11 @@ class SeizeService
             'seize_end_time' => '',
         ];
 
-        try{
+        try {
             // 获取配置
             $cquery = new Config();
             $config_data = $cquery->info('seize_rules');
-            if(empty($config_data)){
+            if (empty($config_data)) {
                 client_error('seize_rules配置不存在！');
             }
             $config = json_decode($config_data['value'], true);
@@ -88,7 +89,7 @@ class SeizeService
 
             // 星期校验
             $week = date('w');
-            if(array_search($week,$rule_week) === false){
+            if (array_search($week, $rule_week) === false) {
                 return [
                     'res' => false,
                     'code' => 1,
@@ -97,16 +98,15 @@ class SeizeService
             }
 
             // 时间段校验
-            $am_rule = explode(",",$rule_hours[0]);
-            $pm_rule = explode(",",$rule_hours[1]);
+            $am_rule = explode(',', $rule_hours[0]);
+            $pm_rule = explode(',', $rule_hours[1]);
             $am_start_time = $am_rule[0];
             $am_end_time = $am_rule[1];
 
             $pm_start_time = $pm_rule[0];
             $pm_end_time = $pm_rule[1];
-            if(
-                !((date('H:i:s', time()) >= $am_start_time && date('H:i:s', time()) <= $am_end_time)
-                || 
+            if (!((date('H:i:s', time()) >= $am_start_time && date('H:i:s', time()) <= $am_end_time)
+                ||
                (date('H:i:s', time()) >= $pm_start_time && date('H:i:s', time()) <= $pm_end_time))
             ) {
                 return [
@@ -124,7 +124,7 @@ class SeizeService
                 ];
             }
 
-            if(time() > strtotime($metting_end_time)){
+            if (time() > strtotime($metting_end_time)) {
                 return [
                     'res' => false,
                     'code' => 4,
@@ -132,42 +132,42 @@ class SeizeService
                 ];
             }
 
-            if(strtotime($metting_start_time) + 15 * 60 > time()){
+            if (strtotime($metting_start_time) + 15 * 60 > time()) {
                 return [
                     'res' => false,
                     'code' => 5,
                     'msg' => '会议开始15分钟内，不可抢占！'
                 ];
             }
-            
-            $now = date('Y-m-d H:i:s',time());
-            if($now > $metting_start_time){
+
+            $now = date('Y-m-d H:i:s', time());
+            if ($now > $metting_start_time) {
                 $res['seize_start_time']    = $now;
                 $res['seize_end_time']      = $metting_end_time;
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             server_error('抢占会议室配置信息获取失败！' . $e->getMessage());
         }
         return $res;
     }
 
     /**
-     * @title: 会议室确认抢占
-     * @path: 
-     * @author: EricZhou
-     * @param {*}
-     * @return {*}
-     * @description: 
+     * 会议室确认抢占
+     * @param array $data
+     * @return array
+     * @throws \Throwable
      */
-    public function confirm(array $data = []){
+    #[ArrayShape(['seize_end_time' => "mixed"])] public function confirm(array $data = []): array
+    {
         $room_id                = $data['room_id'];
         $metting_id             = $data['metting_id'];
         $subject                = $data['subject'];
-        DB::beginTransaction();
-        try{
-            $rquery     = new Room();
-            $room_data  = $rquery->info(['id' => $room_id, 'is_deleted' => 0],['id as room_id','name','floor','capacity','uses']);
-            if(empty($room_data)){
+
+        $rquery = new Room();
+        $rquery->getConnection()->beginTransaction();
+        try {
+            $room_data  = $rquery->info(['id' => $room_id, 'is_deleted' => 0], ['id as room_id','name','floor','capacity','uses']);
+            if (empty($room_data)) {
                 client_error('会议室信息不存在！');
             }
 
@@ -175,18 +175,18 @@ class SeizeService
             $condition      = ['id'=> $metting_id,'is_deleted' => 0];
             $fileds         = ['id as metting_id','subject','moderator','metting_start_time','metting_end_time','status as metting_status'];
             $meet_data  = $mquery->info($condition, $fileds);
-            if(empty($meet_data)){
+            if (empty($meet_data)) {
                 client_error('会议信息不存在！');
             }
             $res                = array_merge($room_data, $meet_data);
             $res['room_uses']   = Room::$room_uses_map[$room_data['uses']] ?? '';
-            
-            $seize_result       = $this->seizeRulesValidate($res['metting_start_time'],$res['metting_end_time']);
-            if($seize_result['res'] === false){
+
+            $seize_result       = $this->seizeRulesValidate($res['metting_start_time'], $res['metting_end_time']);
+            if ($seize_result['res'] === false) {
                 client_error($seize_result['msg']);
             }
 
-            $user_info = (new User())::info(['id' => user_id()], 'name');
+            $user_info = (new User())::info(['name']);
             // 新增会议信息
             $new_metting    = new Metting();
             $new_metting->room_id               = $room_id;
@@ -198,23 +198,23 @@ class SeizeService
             $new_metting->created_by            = user_id();
             $new_metting->updated_by            = user_id();
 
-            if(!$new_metting->save()){
-                DB::rollBack();
+            if (!$new_metting->save()) {
+                $rquery->getConnection()->rollBack();
                 client_error('会议室抢占失败！');
             }
 
             // 更新旧的会议信息
             $attributes = [
                 'is_deleted'    => 1,
-                'remark'        =>'用户'.user_id().'抢占',
+                'remark'        =>'用户' . user_id() . '抢占',
                 'status'        => Metting::METTING_STATUS_SEIZE,
                 'seize_user_id' => user_id(),
                 'seize_time'    => date('Y-m-d H:i:s'),
                 'updated_by'    => user_id()
             ];
             $update_row = $mquery->where(['id' => $metting_id])->update($attributes);
-            if($update_row <= 0) {
-                DB::rollBack();
+            if ($update_row <= 0) {
+                $rquery->getConnection()->rollBack();
                 client_error('会议室抢占失败。');
             }
 
@@ -228,17 +228,17 @@ class SeizeService
             $recoded_obj->room_id       = $room_id;
             $recoded_obj->created_by    = user_id();
             $recoded_obj->updated_by    = user_id();
-            if(!$recoded_obj->save()){
+            if (!$recoded_obj->save()) {
                 DB::rollBack();
                 client_error('会议室抢占失败。');
             }
-        }catch(PDOException $ex){
+        } catch (\PDOException $ex) {
             DB::rollBack();
             server_error('抢占会议室失败：' . $ex->getMessage());
-        }catch(Exception $e){
+        } catch (Exception $e) {
             server_error('抢占会议室失败:' . $e->getMessage());
         }
-        DB::commit();
+        $rquery->getConnection()->commit();
         return [
             'seize_end_time' => $seize_result['seize_end_time']
         ];

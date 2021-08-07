@@ -12,7 +12,7 @@ class User extends Authenticatable
 
     protected $guarded = ['id'];
     protected $table = 'users';
-    protected $fillable = ['name','id_number','mobile','seat_number','openid','api_token','is_deleted','update_by','status','created_by'];
+    protected $fillable = ['name','id_number','mobile','seat_number','openid','api_token','avatar','is_deleted','update_by','status','created_by'];
 
     /**
      * 登陆&注册
@@ -27,15 +27,20 @@ class User extends Authenticatable
         ], [
             'name' => arr_value($data, 'nick_name', ''),
             'api_token' => $api_token,
+            'avatar' => arr_value($data, 'avatar', ''),
             'created_by' => arr_value($data, 'created_by', ''),
             'modified_by' => arr_value($data, 'modified_by', ''),
         ]);
         return $api_token;
     }
 
-    public static function info($condition,$fileds="*")
+    /**
+     * @param string[] $columns
+     * @return array
+     */
+    public static function info(array $columns = ['*'])
     {
-        $data = self::query()->where($condition)->get($fileds)->first();
-        return json_decode(json_encode(collect($data)->toArray(),true),true);;
+        $data = self::query()->where(['id' => user_id()])->first($columns);
+        return collect($data)->toArray();
     }
 }

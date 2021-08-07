@@ -21,11 +21,11 @@ class MyController extends MiniApiController
 
     /**
      * @title: 查看用户的资源浪费记录
-     * @path: 
+     * @path:
+     * @param MyService $service
+     * @return array {*}
+     * @description:
      * @author: EricZhou
-     * @param {MyService} $service
-     * @return {*}
-     * @description: 
      */
     public function useLog(MyService $service)
     {

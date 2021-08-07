@@ -82,7 +82,7 @@ class ReserveService
     {
         try {
             $userId = user_id();
-            $user = User::info(['id' => $userId]);
+            $user = User::info();
             DB::beginTransaction();
             $metting = Metting::add([
                 'room_id' => $params['room_id'],
@@ -135,7 +135,7 @@ class ReserveService
     private function getOrder()
     {
         $userId = user_id();
-        $user = User::info(['id' => $userId]);
+        $user = User::info();
         $order = 'id asc';
         if ($user['seat_number']) {
             $userRegion = explode('-', $user['seat_number']);

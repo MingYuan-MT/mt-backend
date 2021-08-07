@@ -10,6 +10,7 @@ namespace App\Http\Services;
 
 use App\Models\Metting;
 use App\Models\ReserveRecord;
+use JetBrains\PhpStorm\ArrayShape;
 
 class MyService
 {
@@ -34,18 +35,23 @@ class MyService
 
     /**
      * @title: 会议抢占记录
-     * @path: 
+     * @path:
+     * @return array {*}
+     * @description:
      * @author: EricZhou
-     * @param {*}
-     * @return {*}
-     * @description: 
      */
-    public function useLogRecords()
+    #[ArrayShape(['record_count' => "array", 'list' => "\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection"])] public function useLogRecords(): array
     {
-        $records = Metting::useLogRecords(['m.moderator_id' => user_id(), 'm.status' => Metting::METTING_STATUS_SEIZE]);
+        $query = Metting::query();
+        $columns = ['rooms.name as room_name','users.name as size_name','mettings.seize_time'];
+        $query->where(['mettings.moderator_id' => user_id(), 'mettings.status' => Metting::METTING_STATUS_SEIZE]);
+        $query->leftJoin('users', 'users.id', '=', 'mettings.seize_user_id');
+        $query->leftJoin('rooms', 'rooms.id', '=', 'mettings.room_id');
+        $data = $query->get($columns);
+        $data = collect($data)->toArray();
         $record_count['month_times'] = 0;
         $record_count['year_times'] = 0;
-        foreach ($records as $record) {
+        foreach ($data as $record) {
             if(date('m',strtotime($record['seize_time']) == date('m'))){
                 $record_count['month_times'] ++;
             }
@@ -53,8 +59,9 @@ class MyService
                 $record_count['year_times'] ++;
             }
         }
-        $data['record_count'] = $record_count;
-        $data['list']           = $records;
-        return $data;
+        return [
+            'record_count' => $record_count,
+            'list' => array_values($data),
+        ];
     }
 }
