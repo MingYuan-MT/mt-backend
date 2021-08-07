@@ -22,7 +22,7 @@ class User extends Authenticatable
     {
         $api_token = rand_str();
         self::query()->updateOrCreate([
-            'openid' => arr_value($data, 'mobile'),
+            'openid' => arr_value($data, 'openid'),
         ], [
             'name' => arr_value($data, 'nick_name', ''),
             'api_token' => $api_token,

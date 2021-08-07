@@ -12,13 +12,18 @@ use Illuminate\Support\Facades\Storage;
 
 class WeChatService
 {
+    /**
+     * @param $params
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response|void
+     */
     public function code($params)
     {
         $file = arr_value($params, 'name/s', '');
         try {
-            $res = Storage::disk('local')->get($file);
-            $meta = Storage::disk('local')->getMimetype($file);
-            $size = Storage::disk('local')->size($file);
+            $storage = Storage::disk('local');
+            $res = $storage->get($file);
+            $meta = $storage->getMimetype($file);
+            $size = $storage->size($file);
             return response($res, 200, [
                 'Content-Type' => $meta,
                 'Content-Length' => $size,
