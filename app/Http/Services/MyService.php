@@ -14,7 +14,10 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class MyService
 {
-    public function records()
+    /**
+     * @return mixed
+     */
+    public function records(): mixed
     {
         $data = ReserveRecord::records(['user_id' => user_id()]);
         return $this->dealData($data);

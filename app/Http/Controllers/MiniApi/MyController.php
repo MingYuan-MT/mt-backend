@@ -10,11 +10,15 @@ namespace App\Http\Controllers\MiniApi;
 
 use App\Http\Controllers\MiniApiController;
 use App\Http\Services\MyService;
+use JetBrains\PhpStorm\ArrayShape;
 
 class MyController extends MiniApiController
 {
-
-    public function reserve(MyService $service)
+    /**
+     * @param MyService $service
+     * @return mixed
+     */
+    public function reserve(MyService $service): mixed
     {
         return $service->records();
     }
@@ -27,7 +31,7 @@ class MyController extends MiniApiController
      * @description:
      * @author: EricZhou
      */
-    public function useLog(MyService $service)
+    #[ArrayShape(['record_count' => "array", 'list' => "\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection"])] public function useLog(MyService $service): array
     {
         return $service->useLogRecords();
     }

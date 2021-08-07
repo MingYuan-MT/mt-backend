@@ -41,7 +41,11 @@ class SigningController extends MiniApiController
         return $service->code($params);
     }
 
-    public function signing(SigningService $service)
+    /**
+     * @param SigningService $service
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     */
+    public function signing(SigningService $service): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder
     {
         $params = $this->getParams(
             [

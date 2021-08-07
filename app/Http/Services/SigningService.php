@@ -17,7 +17,6 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class SigningService
 {
-
     /**
      * @param $params
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
@@ -30,7 +29,12 @@ class SigningService
         $query->where(['mettings.created_by' => $user_id, 'mettings.is_need_sign' => 1]);
         $columns = ['mettings.id', 'mettings.room_id', 'mettings.subject', 'rooms.name', 'mettings.metting_start_time'];
         $query->leftJoin('rooms', 'rooms.id', '=', 'mettings.room_id');
-        return $query->paginate($limit, $columns);
+        $data = $query->paginate($limit, $columns);
+        $week_array = ['日', '一', '二', '三', '四', '五', '六'];
+        $data->each(function ($item) use ($week_array) {
+            $item->week = '星期' . $week_array[date('w', strtotime($item->metting_start_time))];
+        });
+        return $data;
     }
 
     /**
