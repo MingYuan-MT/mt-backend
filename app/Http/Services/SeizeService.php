@@ -262,7 +262,7 @@ class SeizeService
         // 加密
         $scene = http_build_query($room_code);
         $optional = [
-            'page' => 'pages/seize/index'
+            'page' => 'pages/seize/toSeize/index'
         ];
         // 生成小程序码
         $mini_program = new MiniProgram();
