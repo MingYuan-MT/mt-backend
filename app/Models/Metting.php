@@ -77,7 +77,7 @@ class Metting extends Model
         return self::query()
             ->leftJoin('rooms', 'rooms.id', '=', 'mettings.room_id')
             ->where($condition)
-            ->select(['mettings.id','moderator','subject','name','uses','capacity','metting_start_time','metting_end_time'])
+            ->select(['mettings.id','moderator','subject','name','uses','capacity','metting_start_time','metting_end_time','projection_mode'])
             ->first()
             ->toArray();
     }
