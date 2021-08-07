@@ -26,12 +26,14 @@ class ReserveController extends MiniApiController
                 'end_time.required',
                 'region.required',
                 'is_shadow.int',
+                'is_need_sign.int',
             ],
             [
                 'start_time.required' => '会议开始时间不能为空',
                 'end_time.required' => '会议结束时间不能为空',
                 'region.required' => '所在区域不能为空',
                 'is_shadow.int' => '是否需要投影必须是数字',
+                'is_need_sign.int' => '是否需要签到必须是数字',
             ]
         );
         return $service->lists('condition', $params);

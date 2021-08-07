@@ -19,6 +19,12 @@ class ReserveRecord extends Model
     public static function records($condition)
     {
         $query = self::query();
-        return $query->where($condition)->get()->toArray();
+        return $query
+            ->leftJoin('rooms','rooms.id','=','reserve_records.room_id')
+            ->leftJoin('mettings','mettings.id','=','reserve_records.metting_id')
+            ->where($condition)
+            ->select(['rooms.name','mettings.subject','metting_start_time','metting_end_time','date','mettings.status'])
+            ->get()
+            ->toArray();
     }
 }
