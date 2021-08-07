@@ -54,4 +54,9 @@ class SigningController extends MiniApiController
         $params = $this->request->all();
         return $service->statistics($params);
     }
+
+    public function template_message_send()
+    {
+
+    }
 }
