@@ -18,11 +18,12 @@ class SigningService
 
     }
 
-    public function info($params)
+    public function code($params)
     {
         $query = Metting::query();
-        $query->where(['id' => 1, 'room_id' => 1]);
-        return $query->first(['id', 'room_id']);
+        $query->where(['id' => arr_value($params, 'id/d', 0)]);
+        $metting_id =  $query->first(['id', 'room_id']);
+        dd($metting_id);
     }
 
     public function share($params)

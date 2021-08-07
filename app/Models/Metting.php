@@ -38,7 +38,8 @@ class Metting extends Model
 
     public static function getRoomIds($condition)
     {
-        return self::query()->where($condition)->value('room_id');
+       $data = self::query()->where($condition)->get('room_id')->toArray();
+       return array_column($data,'room_id');
     }
 
     public static function add($params)

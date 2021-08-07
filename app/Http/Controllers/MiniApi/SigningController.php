@@ -21,7 +21,7 @@ class SigningController extends MiniApiController
         return $service->list($this->params);
     }
 
-    public function info(SigningService $service)
+    public function code(SigningService $service)
     {
         $params = $this->getParams(
             [
@@ -32,7 +32,7 @@ class SigningController extends MiniApiController
                 'metting_id.int' => '会议ID必须为数字',
             ]
         );
-        return $service->info($params);
+        return $service->code($params);
     }
 
     public function share(SigningService $service)
@@ -53,5 +53,10 @@ class SigningController extends MiniApiController
     {
         $params = $this->request->all();
         return $service->statistics($params);
+    }
+
+    public function template_message_send()
+    {
+
     }
 }

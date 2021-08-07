@@ -37,10 +37,13 @@ class Nlp
 
     private string $sdgp_api = '/sdgp'; // 语义依存 (依存图) 分析
 
+    /**
+     *
+     */
     public function __construct()
     {
         $this->app_id = config('nlp.app_id');
-        $this->app_key = config('rtc.api_key');
+        $this->app_key = config('nlp.api_key');
         if (empty($this->app_id) || empty($this->app_key)) {
             throw new HttpException(500, 'NLP服务配置不正常，请检查配置');
         }
@@ -48,9 +51,12 @@ class Nlp
         $this->sign();
     }
 
-    public function get()
+    /**
+     * @param $text
+     * @return array
+     */
+    public function get($text): array
     {
-        $text = '帮我预定明天下午两点半的摩天崖会议室';
         $word = $this->request($this->cws_api, $text);
         $pos = $this->request($this->pos_api, $text);
         $data = $row = [];
@@ -60,24 +66,46 @@ class Nlp
                 'type' => $pos[$key],
             ];
         }
-
         foreach ($data as $value) {
             $row[$value['type']][] = $value['text'];
         }
-        dd($row);
+        return $row;
     }
 
-    private function request($api, $text)
+    /**
+     * @param $params
+     * @return string
+     */
+    public function getTime($params): string
+    {
+        $data = arr_value($params, 'nt/a', []);
+        return implode($data);
+    }
+
+    /**
+     * @param $api
+     * @param $text
+     * @return mixed
+     */
+    private function request($api, $text): mixed
     {
         $data = [
             'text' => $text,
         ];
         $url = $this->host . $api;
-        $result = $this->client::timeout(15*60)->withHeaders($this->headers)->post($url, $data);
-        $row = json_decode($result, true);
-        return array_shift($row['data']);
+        $response = $this->client::asForm()->timeout(15*60)->withHeaders($this->headers)->post($url, $data)
+            ->collect();
+        $result = $response->toArray();
+        $row = [];
+        if ($result['code'] == 0 && !empty($result['data'])) {
+            $row = array_shift($result['data']);
+        }
+        return $row;
     }
 
+    /**
+     *
+     */
     private function sign()
     {
         $param = ['type' => 'dependent'];
@@ -89,7 +117,6 @@ class Nlp
             'X-Param' => $x_param,
             'X-Appid' => $this->app_id,
             'X-CheckSum' => $x_check_sum,
-            'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
         ];
     }
 
