@@ -31,8 +31,28 @@ class SeizeController extends MiniApiController
         return $service->mettingInfo($params);
     }
 
+    /**
+     * @title: 确认抢占信息
+     * @path: 
+     * @author: EricZhou
+     * @param {SeizeService} $service
+     * @return {*}
+     * @description: 确认抢占信息
+     */
     public function confirm(SeizeService $service)
     {
-
+         $params = $this->getParams(
+            [
+                'metting_id' => 'required|int',
+                'room_id' => 'required|int',
+            ],
+            [
+                'metting_id.required' => '会议室ID不能为空',
+                'metting_id.int' => '会议室ID必须为数字',
+                'room_id.required' => '会议室ID不能为空',
+                'room_id.int' => '会议室ID必须为数字',
+            ]
+        );
+        return $service->confirm($params);
     }
 }

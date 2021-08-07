@@ -12,6 +12,18 @@ class Metting extends Model
     protected $table = 'mettings';
     protected $fillable = ['room_id','subject', 'moderator','update_by','is_deleted','status','created_by'];
 
+    const METTING_STATUS_DEFAULT = 0;
+    const METTING_STATUS_ONGOING = 1;
+    const METTING_STATUS_END = 2;
+    const METTING_STATUS_CANCEL = 3;
+
+    public static $metting_status_map = [
+        self::METTING_STATUS_DEFAULT => '未开始',
+        self::METTING_STATUS_ONGOING => '进行中',
+        self::METTING_STATUS_END => '已结束',
+        self::METTING_STATUS_CANCEL => '已取消',
+    ];
+
     /**
      * @author: EricZhou
      * @param {*} $filed

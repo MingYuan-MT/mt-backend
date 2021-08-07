@@ -15,6 +15,23 @@ use JetBrains\PhpStorm\ArrayShape;
 class LoginController extends MiniApiController
 {
     /**
+     * @param LoginService $service
+     * @return array
+     */
+    public function wechatAuth(LoginService $service): array
+    {
+        $params = $this->getParams(
+            [
+                'code' => 'required',
+            ],
+            [
+                'code.required' => 'code 不能为空',
+            ]
+        );
+        return $service->wechatAuth($params);
+    }
+
+    /**
      * 登陆&注册
      * @param LoginService $service
      * @return array
