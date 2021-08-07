@@ -15,6 +15,9 @@ class MiniProgram
 {
     private $app;
 
+    /**
+     *
+     */
     public function __construct()
     {
         $this->app = EasyWeChat::miniProgram();
@@ -44,8 +47,8 @@ class MiniProgram
     public function appCode($scene, $optional)
     {
         try {
-            $optional['auto_color'] = true,
-            $optional['is_hyaline'] = true,
+            $optional['auto_color'] = true;
+            $optional['is_hyaline'] = true;
             return $this->app->app_code->getUnlimit($scene, $optional);
         } catch (Exception $exception) {
             server_error($exception->getMessage());
