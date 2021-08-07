@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Room extends Model
 {
@@ -30,20 +31,44 @@ class Room extends Model
         self::ROOM_STATUS_CLOSE => "封闭",
     ];
 
+    const PROJECTION_MODE_NULL = 0;
+    const PROJECTION_MODE_TV = 1;
+    const PROJECTION_MODE_SHADOW = 2;
+    const PROJECTION_MODE_EL = 3;
+    public static $projection_mode_map = [
+        self::PROJECTION_MODE_NULL => "无",
+        self::PROJECTION_MODE_TV => "电视",
+        self::PROJECTION_MODE_SHADOW => "投影",
+        self::PROJECTION_MODE_EL => "电子屏",
+    ];
+
     /**
-     * @author: EricZhou
      * @param {*} $filed $condition
      * @return {*}
      * @description: 会议室详情
+     * @author: EricZhou
      */
-    public function info($condition = ['id' => 0], $fileds = ['*']){
+    public function info($condition = ['id' => 0], $fileds = ['*'])
+    {
         $query = self::query();
         $data = $query->where($condition)->get($fileds)->first();
         return collect($data)->toArray();
     }
 
-    public static function getList($condition)
+    public static function getList($condition, $order)
     {
-        return self::query()->where($condition)->get()->toArray();
+        return self::query()
+            ->leftJoin('buildings', 'buildings.id', '=', 'rooms.building_id')
+            ->select('rooms.*', 'buildings.name as build_name')
+            ->where($condition)
+            ->orderByRaw(DB::raw($order))
+            ->get()
+            ->toArray();
+    }
+
+    public static function getRoomIds($condition)
+    {
+        $data = self::query()->where($condition)->get('id')->toArray();
+        return array_column($data, 'id');
     }
 }
