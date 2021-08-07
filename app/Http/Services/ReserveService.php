@@ -36,7 +36,7 @@ class ReserveService
 
         }
         //获取当前时间段正在使用的会议室id
-        $roomWhere = ['status' => 1,'is_deleted' => 0];
+        $roomWhere = ['status' => 1, 'is_deleted' => 0];
         if (isset($params['start_time']) && $params['start_time']) {
             $roomWhere[] = ['metting_start_time', '>', $params['start_time']];
             $roomWhere[] = ['metting_end_time', '<', $params['start_time']];
@@ -47,14 +47,15 @@ class ReserveService
             $where[] = ['id', 'not in', $params['room_id']];
         }
         if (isset($params['region']) && $params['region']) {
-            $where['region_id'] = 26691;
+            $where['rooms.region_id'] = 26691;
         }
         if (isset($params['is_shadow'])) {
             $where['projection_mode'] = $params['is_shadow'] ? [1, 2, 3] : 0;
         }
 
-        $rooms = Room::getList($where);
-        $rooms = $this->dealData($rooms);
+        $order = $this->getOrder();
+        $rooms = Room::getList($where, $order);
+        $rooms = $this->dealData($rooms,$params);
         return $rooms;
     }
 
@@ -111,13 +112,38 @@ class ReserveService
      * @param $rooms
      * @return array
      */
-    private function dealData($rooms): array
+    private function dealData($rooms,$params): array
     {
         $result = [];
         foreach ($rooms as $room) {
-            $result[$room['floor'] . 'F'][] = $room;
+            $room['uses_name'] = Room::$room_uses_map[$room['uses']];
+            $room['projection_mode_name'] = Room::$projection_mode_map[$room['projection_mode']];
+            $room['start_time'] = $params['start_time'];
+            $room['end_time'] = $params['end_time'] ?? '';
+            $result[$room['build_name']][$room['floor'] . 'F'][] = $room;
         }
         return $result;
+    }
+
+
+    private function getOrder()
+    {
+        $userId = user_id();
+        $user = User::info(['id' => $userId]);
+        $order = 'id asc';
+        if ($user['seat_number']) {
+            $userRegion = explode('-', $user['seat_number']);
+            if ($userRegion) {
+                $userBuild = $userRegion[0];
+                $userFloor = $userRegion[1];
+                $roomIds = Room::getRoomIds(['floor' => $userFloor]);
+                if ($roomIds) {
+                    $roomIds = implode(',', $roomIds);
+                    $order = "rooms.id not in(" . $roomIds . "),floor desc";
+                }
+            }
+        }
+        return $order;
     }
 
     /**
