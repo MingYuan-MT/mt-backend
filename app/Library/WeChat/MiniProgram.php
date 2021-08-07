@@ -28,7 +28,8 @@ class MiniProgram
     public function auth($code)
     {
         try {
-            return $this->app->auth->session($code);
+            $auth = $this->app->auth->session($code);
+            return arr_value($auth, 'openid/s', '');
         } catch (Exception $exception) {
             server_error($exception->getMessage());
         }
