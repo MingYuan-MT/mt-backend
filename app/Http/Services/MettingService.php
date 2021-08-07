@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 20:20:53
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-07 11:43:44
+ * @LastEditTime: 2021-08-07 14:32:24
  * @LastEditors: EricZhou
  * @Description: 会议服务
  */
@@ -27,12 +27,12 @@ class MettingService
         $res = [];
         try{
             $mquery = new Metting();
-            $meet_data = $mquery->info('id', $data['id']);
+            $meet_data = $mquery->info(['id' => $data['id'], 'is_deleted' => 0]);
             if(empty($meet_data)){
                 client_error('会议信息不存在！');
             }
             $rquery = new Room();
-            $room_data = $rquery->info('id', $meet_data['room_id'], 'name');
+            $room_data = $rquery->info(['id' => $meet_data['room_id'], 'is_deleted' => 0], 'name');
             if(empty($room_data)){
                 client_error('会议室信息不存在！');
             }
@@ -60,12 +60,12 @@ class MettingService
         $res = [];
         try{
             $mquery     = new Metting();
-            $meet_data  = $mquery->info('id', $data['id']);
+            $meet_data  = $mquery->info(['id' => $data['id'], 'is_deleted' => 0]);
             if(empty($meet_data)){
                 client_error('会议信息不存在！');
             }
             $rquery     = new Room();
-            $room_data  = $rquery->info('id', $meet_data['room_id']);
+            $room_data  = $rquery->info(['id' => $meet_data['room_id'], 'is_deleted' => 0]);
             if(empty($room_data)){
                 client_error('会议室信息不存在！');
             }

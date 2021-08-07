@@ -43,16 +43,20 @@ class SeizeController extends MiniApiController
     {
          $params = $this->getParams(
             [
-                'metting_id' => 'required|int',
-                'room_id' => 'required|int',
+                'metting_id'            => 'required|int',
+                'room_id'               => 'required|int',
+                'subject'               => 'required|string',
             ],
             [
-                'metting_id.required' => '会议室ID不能为空',
-                'metting_id.int' => '会议室ID必须为数字',
-                'room_id.required' => '会议室ID不能为空',
-                'room_id.int' => '会议室ID必须为数字',
+                'metting_id.required'   => '会议室ID不能为空',
+                'metting_id.int'        => '会议室ID必须为数字',
+                'room_id.required'      => '会议室ID不能为空',
+                'room_id.int'           => '会议室ID必须为数字',
+                'subject.required'      => '主题不能为空',
+                'subject.string'        => '主题字段数据类型错误',
             ]
         );
+        // return response()->json(['code'=>0,'msg'=>'抢占成功']);
         return $service->confirm($params);
     }
 }
