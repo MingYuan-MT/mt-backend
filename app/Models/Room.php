@@ -52,7 +52,7 @@ class Room extends Model
     {
         $query = self::query();
         $data = $query->where($condition)->get($fileds)->first();
-        return collect($data)->toArray();
+        return json_decode(json_encode(collect($data)->toArray(),true),true);;
     }
 
     public static function getList($condition, $order)
