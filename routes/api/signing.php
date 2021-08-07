@@ -13,7 +13,7 @@ use \Illuminate\Support\Facades\Route;
  */
 Route::prefix('signing')->group(function () {
     Route::get('list', 'SigningController@list'); // 获取需要签到的会议列表
-    Route::get('info', 'SigningController@info'); // 获取签到二维码
+    Route::get('code', 'SigningController@code'); // 获取签到二维码
     Route::get('share', 'SigningController@share'); // 分享签到二维码
     Route::get('statistics', 'SigningController@statistics');
 });
