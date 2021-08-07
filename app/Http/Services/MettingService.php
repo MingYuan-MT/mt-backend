@@ -4,7 +4,7 @@
  * @CreateByIde: VsCode
  * @Date: 2021-08-06 20:20:53
  * @Email: mengyilingjian@outlook.com
- * @LastEditTime: 2021-08-07 11:10:56
+ * @LastEditTime: 2021-08-07 11:27:25
  * @LastEditors: EricZhou
  * @Description: 会议服务
  */
@@ -12,8 +12,6 @@ namespace App\Http\Services;
 
 use App\Models\Metting;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use App\Models\Room;
 
 class MettingService
@@ -100,15 +98,8 @@ class MettingService
 
     public function save($params)
     {
-        $model = new  Metting();
-        $model->room_id = $params['room_id'];
-        $model->subject = '张力'.'预订的会议室';
-        $model->moderator = '张力';
-        $model->metting_strat_time = $params['start_time'];
-        $model->metting_end_time = $params['end_time'];
-        $model->status = 0;
-        $model->save();
-        return ['message' => '预订成功'];
+
+
     }
 
     public function update($params)

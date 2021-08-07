@@ -73,13 +73,39 @@ class ReserveController extends MiniApiController
         return $service->lists('voice', $params);
     }
 
-    public function add()
+    public function add(ReserveService $service)
     {
-
+        $params = $this->getParams(
+            [
+                'room_id' => 'required|int',
+                'start_time'  => 'required',
+                'end_time'  => 'required',
+            ],
+            [
+                'room_id.required' => '会议室ID不能为空',
+                'room_id.int' => '会议室ID必须为数字',
+                'start_time.required' => '会议开始时间不能为空',
+                'end_time.required' => '会议结束时间不能为空',
+            ]
+        );
+        return $service->add($params);
     }
 
-    public function edit()
+    public function edit(ReserveService $service)
     {
-
+        $params = $this->getParams(
+            [
+                'id' => 'required|int',
+                'subject'  => 'required',
+                'moderator'  => 'required',
+            ],
+            [
+                'id.required' => '会议ID不能为空',
+                'id.int' => '会议ID必须为数字',
+                'subject.required' => '会议主题不能为空',
+                'moderator.required' => '会议主主持人不能为空',
+            ]
+        );
+        return $service->edit($params);
     }
 }

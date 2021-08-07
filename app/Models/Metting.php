@@ -10,7 +10,7 @@ class Metting extends Model
     use HasFactory;
 
     protected $table = 'mettings';
-    protected $fillable = ['subject', 'moderator'];
+    protected $fillable = ['room_id','subject', 'moderator','update_by','is_deleted','status','created_by'];
 
     const METTING_STATUS_DEFAULT = 0;
     const METTING_STATUS_ONGOING = 1;
@@ -29,15 +29,21 @@ class Metting extends Model
      * @param {*} $filed
      * @return {*}
      * @description: 会议详情
-     */    
+     */
     public function info($condition = ['id' => 0], $fileds = ['*']){
         $query = self::query();
         $data = $query->where($condition)->get($fileds)->first();
         return collect($data)->toArray();
     }
 
-    public function getRoomIds($condition)
+    public static function getRoomIds($condition)
     {
-        return $this->where($condition)->value('room_id');
+        return self::query()->where($condition)->value('room_id');
+    }
+
+    public static function add($params)
+    {
+        $query = self::query();
+        return $query->create($params);
     }
 }

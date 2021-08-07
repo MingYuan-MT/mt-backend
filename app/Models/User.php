@@ -31,4 +31,10 @@ class User extends Authenticatable
         ]);
         return $api_token;
     }
+
+    public static function info($condition,$fileds="*")
+    {
+        $data = self::query()->where($condition)->get($fileds)->first();
+        return collect($data)->toArray();
+    }
 }

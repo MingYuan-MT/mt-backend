@@ -8,7 +8,12 @@
 
 namespace App\Http\Services;
 
+use App\Models\ReserveRecord;
+
 class MyService
 {
-
+    public function records()
+    {
+        return ReserveRecord::records(['user_id' => user_id()]);
+    }
 }
