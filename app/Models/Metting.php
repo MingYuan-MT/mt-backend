@@ -10,7 +10,7 @@ class Metting extends Model
     use HasFactory;
 
     protected $table = 'mettings';
-    protected $fillable = ['subject', 'moderator','update_by'];
+    protected $fillable = ['room_id','subject', 'moderator','update_by','is_deleted','status','created_by'];
 
     /**
      * @author: EricZhou

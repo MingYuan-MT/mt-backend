@@ -35,15 +35,15 @@ class Room extends Model
      * @param {*} $filed $condition
      * @return {*}
      * @description: 会议室详情
-     */    
+     */
     public function info($condition = ['id' => 0], $fileds = ['*']){
         $query = self::query();
         $data = $query->where($condition)->get($fileds)->first();
         return collect($data)->toArray();
     }
 
-    public function getList($condition)
+    public static function getList($condition)
     {
-        return $this->where($condition)->get()->toArray();
+        return self::query()->where($condition)->get()->toArray();
     }
 }

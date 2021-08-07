@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ReserveRecord extends Model
 {
     use HasFactory;
+    protected $fillable = ['user_id','user_name', 'date','metting_id','room_id','created_by','updated_by'];
 
     public static function add($params)
     {

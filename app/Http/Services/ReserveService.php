@@ -25,9 +25,9 @@ class ReserveService
     #[ArrayShape(['data' => "array"])] public function lists($type, $params): array
     {
         //获取当前时间段正在使用的会议室id
-        $roomWhere = ['status' => 1];
+        $roomWhere = ['status' => 1,'is_deleted' => 0];
         if (isset($params['start_time']) && $params['start_time']) {
-            $roomWhere[] = ['metting_strat_time', '>', $params['start_time']];
+            $roomWhere[] = ['metting_start_time', '>', $params['start_time']];
             $roomWhere[] = ['metting_end_time', '<', $params['start_time']];
         }
         $roomIds = Metting::getRoomIds($roomWhere);
@@ -41,10 +41,10 @@ class ReserveService
         if (isset($params['is_shadow'])) {
             $where['projection_mode'] = $params['is_shadow'] ? [1, 2, 3] : 0;
         }
-        $model = new Room();
-        $rooms = $model->getList($where);
+
+        $rooms = Room::getList($where);
         $rooms = $this->dealData($rooms);
-        return ['data' => $rooms];
+        return $rooms;
     }
 
     public function edit($params)
@@ -57,9 +57,9 @@ class ReserveService
                     'moderator' => $params['moderator'],
                     'updated_by' => user_id(),
                 ]);
-                return ['message' => '更新成功'];
+                return [];
             }
-            return ['message' => '会议不存在'];
+            return server_error('会议不存在');
         } catch (\Exception $e) {
             server_error('会议更新失败:' . $e->getMessage());
         }
@@ -68,26 +68,29 @@ class ReserveService
     public function add($params)
     {
         try {
-            $metting = Metting::add([
-                'room_id' => $params['room_id'],
-                'subject' => $params['subject'],
-                'moderator' => $params['moderator'],
-                'metting_strat_time' => $params['metting_strat_time'],
-                'metting_end_time' => $params['metting_end_time'],
-                'status' => 0
-            ]);
-            //会议室预订记录表
             $userId = user_id();
             $user = User::info(['id' => $userId]);
+
+            $metting = Metting::add([
+                'room_id' => $params['room_id'],
+                'subject' => $user['name'] . '预订的会议室',
+                'moderator' => $user['name'],
+                'metting_start_time' => $params['start_time'],
+                'metting_end_time' => $params['end_time'],
+                'status' => 0,
+                'created_by' => user_id(),
+            ]);
+            //会议室预订记录表
             ReserveRecord::add([
                 'user_id' => $userId,
                 'user_name' => $user['name'],
                 'date' => date('Y-m-d H:i:s'),
                 'type' => 1,
                 'metting_id' => $metting->id,
-                'room_id' => $params['room_id']
+                'room_id' => $params['room_id'],
+                'created_by' => user_id(),
             ]);
-            return ['message' => '预订成功'];
+            return $metting;
         } catch (\Exception $e) {
             server_error('会议预订失败:' . $e->getMessage());
         }
