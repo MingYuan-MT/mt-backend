@@ -254,7 +254,7 @@ class SeizeService
      * @description:
      * @author: EricZhou
      */
-    public function scanCode(array $data = []) {
+    public function miniCode(array $data = []) {
         $room_code = [
             'type' => 'seize',
             'room_id' => $data['room_id'],

@@ -62,13 +62,13 @@ class SeizeController extends MiniApiController
 
     /**
      * @title: 获取抢占二维码
-     * @path: 
+     * @path: v1/seize/mini-code
      * @param {SeizeService} $service
      * @return {*}
      * @description: 
      * @author: EricZhou
      */
-    public function scanCode(SeizeService $service){
+    public function miniCode(SeizeService $service){
          $params = $this->getParams(
             [
                 'room_id' => 'required|int'
@@ -78,6 +78,6 @@ class SeizeController extends MiniApiController
                 'room_id.int'       => '会议室ID必须为数字',
             ]
         );
-        return $service->scanCode($params);
+        return $service->miniCode($params);
     }
 }

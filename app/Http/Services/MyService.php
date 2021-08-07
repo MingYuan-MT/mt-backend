@@ -46,7 +46,7 @@ class MyService
     #[ArrayShape(['record_count' => "array", 'list' => "\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection"])] public function useLogRecords(): array
     {
         $query = Metting::query();
-        $columns = ['rooms.name as room_name','users.name as size_name','mettings.seize_time'];
+        $columns = ['rooms.name as room_name','users.name as seize_name','mettings.seize_time'];
         $query->where(['mettings.moderator_id' => user_id(), 'mettings.status' => Metting::METTING_STATUS_SEIZE]);
         $query->leftJoin('users', 'users.id', '=', 'mettings.seize_user_id');
         $query->leftJoin('rooms', 'rooms.id', '=', 'mettings.room_id');
