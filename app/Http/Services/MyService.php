@@ -33,7 +33,7 @@ class MyService
     }
 
     /**
-     * @title: 会议抢占记录
+     * @title: 当前用户会议室抢占记录
      * @path: 
      * @author: EricZhou
      * @param {*}

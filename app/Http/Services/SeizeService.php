@@ -13,6 +13,8 @@ use App\Models\Metting;
 use App\Models\Room;
 use App\Models\ReserveRecord;
 use App\Models\User;
+use App\Library\WeChat\MiniProgram;
+use Illuminate\Support\Facades\Storage;
 use Exception;
 use PDOException;
 use Illuminate\Support\Facades\DB;
@@ -242,5 +244,31 @@ class SeizeService
         return [
             'seize_end_time' => $seize_result['seize_end_time']
         ];
+    }
+
+    /**
+     * @title: 二维码抢占会议室
+     * @path: 
+     * @param {*}
+     * @return {*}
+     * @description: 
+     * @author: EricZhou
+     */    
+    public function scanCode(array $data = []) {
+        $room_code = [
+            'type' => 'seize',
+            'room_id' => $data['room_id'],
+        ];
+        // 加密
+        $scene = http_build_query($room_code);
+        $optional = [
+            'page' => 'pages/size/index'
+        ];
+        // 生成小程序码
+        $mini_program = new MiniProgram();
+        $app_code = $mini_program->appCode($scene, $optional);
+        $storage = Storage::disk('local');
+        $storage->put(md5($scene).'.jpeg', $app_code);
+        return ['url' => $storage->url(md5($scene).'.jpeg')];
     }
 }
