@@ -58,9 +58,10 @@ class SigningService
         // 生成小程序码
         $mini_program = new MiniProgram();
         $app_code = $mini_program->appCode($scene, $optional);
+        $file_name = md5($scene).'.jpeg';
         $storage = Storage::disk('local');
-        $storage->put(md5($scene).'.jpeg', $app_code);
-        return ['url' => $storage->url(md5($scene).'.jpeg')];
+        $storage->put($file_name, $app_code);
+        return ['url' => $storage->url($file_name)];
     }
 
     /**
