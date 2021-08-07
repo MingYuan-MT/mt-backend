@@ -16,5 +16,5 @@ Route::prefix('reserve')->group(function () {
     Route::post('shake-lists', 'ReserveController@shakeLists'); // 通过摇一摇获取到的会议室列表
     Route::post('voice-lists', 'ReserveController@voiceLists'); // 通过语音获取到的会议室列表
     Route::post('add', 'ReserveController@add'); // 创建预定会议
-    Route::post('edit', 'SigningController@edit'); // 编辑预定会议
+    Route::post('edit', 'ReserveController@edit'); // 编辑预定会议
 });
