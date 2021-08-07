@@ -11,6 +11,7 @@ namespace App\Http\Services;
 use App\Models\Config;
 use App\Models\Metting;
 use App\Models\Room;
+use App\Models\ReserveRecord;
 use Exception;
 
 class SeizeService
@@ -20,36 +21,41 @@ class SeizeService
      * @param array $data
      * @return array
      */
-    public function mettingInfo(array $data = []): array
+    public function mettingInfo(array $data = [])
     {
         $res = [];
         try{
             $rquery = new Room();
-            $roomData = $rquery->info(['id' => $data['id']],['id as room_id','name','floor','capacity','uses']);
-            if(empty($roomData)){
+            $room_data = $rquery->info(['id' => $data['id']],['id as room_id','name','floor','capacity','uses']);
+            if(empty($room_data)){
                 client_error('会议室信息不存在！');
             }
 
             $mquery = new Metting();
-            $meetData = $mquery->info(['room_id'=> $roomData['room_id']], ['id as metting_id','subject','moderator','metting_start_time','metting_end_time']);
-            if(empty($meetData)){
+            $meet_data = $mquery->info(['room_id'=> $room_data['room_id']], ['id as metting_id','subject','moderator','metting_start_time','metting_end_time','status as metting_status']);
+            if(empty($meet_data)){
                 client_error('会议信息不存在！');
             }
-            $res = array_merge($roomData, $meetData);
-            $res['room_uses'] = isset(Room::$room_uses_map[$roomData['uses']]) ? : '';
-            $result = $this->seizeRulesValidate($res['metting_start_time']);
-            $res['seize_code'] = $result['code'];
-            $res['seize_msg'] = $result['msg'];
-            if(!$result['res']){
-                if($result['code'] == 3){
+            $res = array_merge($room_data, $meet_data);
+            $res['room_uses'] = Room::$room_uses_map[$room_data['uses']] ? : '';
+            $seize_result = $this->seizeRulesValidate($res['metting_start_time'],$res['metting_end_time']);
+            $res['seize_code'] = $seize_result['code'];
+            $res['seize_msg'] = $seize_result['msg'];
+            if(!$seize_result['res']){
+                if($seize_result['code'] == 3){
                     return $res;
                 }
-                server_error($result['msg']);
+                if($seize_result['code'] == 4 && in_array($meet_data['metting_status'],[
+                    Metting::METTING_STATUS_DEFAULT,
+                    Metting::METTING_STATUS_END,
+                    Metting::METTING_STATUS_CANCEL])){
+                    return $res;
+                }
             }
             $now = date('Y-m-d H:i:s',time());
-            if($now > $meetData['metting_start_time']){
+            if($now > $meet_data['metting_start_time']){
                 $res['seize_start_time']    = $now;
-                $res['seize_end_time']      = $meetData['metting_end_time'];
+                $res['seize_end_time']      = $meet_data['metting_end_time'];
             }
         }catch(\Exception $e){
             server_error('抢占会议室信息获取失败:' . $e->getMessage());
@@ -62,7 +68,7 @@ class SeizeService
      * @param $metting_start_time
      * @return array
      */
-    private function seizeRulesValidate($metting_start_time): array
+    private function seizeRulesValidate($metting_start_time, $metting_end_time): array
     {
         $res = [
             'res' =>true,
@@ -72,17 +78,17 @@ class SeizeService
         try{
             // 获取配置
             $cquery = new Config();
-            $cData = $cquery->info('seize_rules');
-            if(empty($cData)){
-                server_error('seize_rules配置不存在！');
+            $config_data = $cquery->info('seize_rules');
+            if(empty($config_data)){
+                client_error('seize_rules配置不存在！');
             }
-            $config = json_decode($cData['value'], true);
-            $ruleWeek = $config['weeks'];
-            $ruleHours = $config['hours'];
+            $config = json_decode($config_data['value'], true);
+            $rule_week = $config['weeks'];
+            $rule_hours = $config['hours'];
 
             // 星期校验
             $week = date('w');
-            if(array_search($week,$ruleWeek) === false){
+            if(array_search($week,$rule_week) === false){
                 return [
                     'res' => false,
                     'code' => 1,
@@ -91,7 +97,7 @@ class SeizeService
             }
 
             // 时间段校验
-            foreach ($ruleHours as $hour){
+            foreach ($rule_hours as $hour){
                 $between = explode(",",$hour);
                 if(date('H:i:s', time()) >= $between[0] && date('H:i:s', time()) <= $between[1]){
                     break;
@@ -110,9 +116,31 @@ class SeizeService
                     'msg' => '会议即将开始，不可抢占！'
                 ];
             }
+
+            if(time() > strtotime($metting_end_time)){
+                return [
+                    'res' => false,
+                    'code' => 4,
+                    'msg' => '会议室空闲中，请直接预定！'
+                ];
+            }
         }catch(Exception $e){
             server_error('抢占会议室配置信息获取失败！' . $e->getMessage());
         }
         return $res;
+    }
+
+    /**
+     * @title: 会议室确认抢占
+     * @path: 
+     * @author: EricZhou
+     * @param {*}
+     * @return {*}
+     * @description: 
+     */
+    public function confirm(array $data = []){
+        $room_id = $data['room_id'];
+        $metting_id = $data['metting_id'];
+        
     }
 }
